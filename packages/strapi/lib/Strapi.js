@@ -11,7 +11,7 @@ const { EventEmitter } = require('events');
 const Koa = require('koa');
 const _ = require('lodash');
 const { logger, models } = require('strapi-utils');
-const stackTrace = require('stack-trace');
+// const stackTrace = require('stack-trace');
 const utils = require('./utils');
 const {
   loadConfigs,
@@ -27,6 +27,9 @@ const {
 const initializeMiddlewares = require('./middlewares');
 const initializeHooks = require('./hooks');
 const createStrapiFs = require('./core/fs');
+const getPrefixedDeps = require('./utils/get-prefixed-dependencies');
+const runChecks = require('./utils/run-checks');
+const defaultQueries = require('./core-api/queries');
 
 /**
  * Construct an Strapi instance.
@@ -107,8 +110,7 @@ class Strapi extends EventEmitter {
 
   runChecks() {
     try {
-      checkFoldersExist(this.config);
-      checkPluginsConflicts(this.config);
+      runChecks(this.config);
     } catch (err) {
       this.log.error(err.message);
       process.exit(1);
@@ -406,127 +408,105 @@ class Strapi extends EventEmitter {
 
   query(entity, plugin) {
     if (!entity) {
-      return this.log.error(
+      throw new Error(
         `You can't call the query method without passing the model's name as a first argument.`
       );
     }
 
-    const model = entity.toLowerCase();
+    const modelName = entity.toLowerCase();
 
-    const Model =
-      _.get(strapi.plugins, [plugin, 'models', model]) ||
-      _.get(strapi, ['models', model]) ||
+    const model =
+      _.get(strapi.plugins, [plugin, 'models', modelName]) ||
+      _.get(strapi, ['models', modelName]) ||
       undefined;
 
-    if (!Model) {
-      return this.log.error(`The model ${model} can't be found.`);
+    if (!model) {
+      throw new Error(`The model ${modelName} can't be found.`);
     }
 
-    const connector = Model.orm;
+    const connector = model.orm;
 
     if (!connector) {
-      return this.log.error(
-        `Impossible to determine the use ORM for the model ${model}.`
+      throw new Error(
+        `Impossible to determine the use ORM for the model ${modelName}.`
       );
     }
 
-    // Get stack trace.
-    const stack = stackTrace.get()[1];
-    const file = stack.getFileName();
-    // const method = stack.getFunctionName();
-
-    // Extract plugin path.
-    let pluginPath = undefined;
-
-    if (file.indexOf('strapi-plugin-') !== -1) {
-      pluginPath = file
-        .split(path.sep)
-        .filter(x => x.indexOf('strapi-plugin-') !== -1)[0];
-    } else if (file.indexOf(path.sep + 'plugins' + path.sep) !== -1) {
-      const pathTerms = file.split(path.sep);
-      const index = pathTerms.indexOf('plugins');
-
-      if (index !== -1) {
-        pluginPath = pathTerms[index + 1];
-      }
+    if (!_.isNil(plugin) && !_.has(strapi.plugins, plugin)) {
+      throw new Error(`Plugin ${plugin} not found`);
     }
 
-    if (!pluginPath) {
-      return this.log.error(
-        'Impossible to find the plugin where `strapi.query` has been called.'
-      );
-    }
+    const buildQueries = plugin
+      ? _.get(
+          this.plugins,
+          [plugin, 'config', 'queries', connector],
+          defaultQueries[connector]
+        )
+      : defaultQueries[connector];
 
-    // Get plugin name.
-    const pluginName = pluginPath.replace('strapi-plugin-', '').toLowerCase();
-    const queries = _.get(
-      this.plugins,
-      `${pluginName}.config.queries.${connector}`
-    );
+    let queries = buildQueries({ model, strapi: this });
 
-    if (!queries) {
-      return this.log.error(
-        `There is no query available for the model ${model}.`
-      );
-    }
+    return Object.assign(queries, {
+      orm: connector,
+      primaryKey: model.primaryKey,
+      associations: model.associations,
+    });
 
-    // Bind queries with the current model to allow the use of `this`.
-    const bindQueries = Object.keys(queries).reduce(
-      (acc, current) => {
-        return (acc[current] = queries[current].bind(Model)), acc;
-      },
-      {
-        orm: connector,
-        primaryKey: Model.primaryKey,
-        associations: Model.associations,
-      }
-    );
+    // // Get stack trace.
+    // const stack = stackTrace.get()[1];
+    // const file = stack.getFileName();
+    // // const method = stack.getFunctionName();
 
-    return bindQueries;
+    // // Extract plugin path.
+    // let pluginPath = undefined;
+
+    // if (file.indexOf('strapi-plugin-') !== -1) {
+    //   pluginPath = file
+    //     .split(path.sep)
+    //     .filter(x => x.indexOf('strapi-plugin-') !== -1)[0];
+    // } else if (file.indexOf(path.sep + 'plugins' + path.sep) !== -1) {
+    //   const pathTerms = file.split(path.sep);
+    //   const index = pathTerms.indexOf('plugins');
+
+    //   if (index !== -1) {
+    //     pluginPath = pathTerms[index + 1];
+    //   }
+    // }
+
+    // if (!pluginPath) {
+    //   return this.log.error(
+    //     'Impossible to find the plugin where `strapi.query` has been called.'
+    //   );
+    // }
+
+    // // Get plugin name.
+    // const pluginName = pluginPath.replace('strapi-plugin-', '').toLowerCase();
+    // const queries = _.get(
+    //   this.plugins,
+    //   `${pluginName}.config.queries.${connector}`
+    // );
+
+    // if (!queries) {
+    //   return this.log.error(
+    //     `There is no query available for the model ${model}.`
+    //   );
+    // }
+
+    // // Bind queries with the current model to allow the use of `this`.
+    // const bindQueries = Object.keys(queries).reduce(
+    //   (acc, current) => {
+    //     return (acc[current] = queries[current].bind(Model)), acc;
+    //   },
+    //   {
+    //     orm: connector,
+    //     primaryKey: Model.primaryKey,
+    //     associations: Model.associations,
+    //   }
+    // );
+
+    // return bindQueries;
   }
 }
-
-const getPrefixedDeps = (prefix, pkgJSON) => {
-  return Object.keys(pkgJSON.dependencies)
-    .filter(d => d.startsWith(prefix))
-    .map(pkgName => pkgName.substring(prefix.length + 1));
-};
-
-const requiredPaths = ['api', 'extensions', 'plugins', 'config', 'public'];
-const checkFoldersExist = ({ appPath }) => {
-  let missingPaths = [];
-  for (let reqPath of requiredPaths) {
-    if (!fs.pathExistsSync(path.resolve(appPath, reqPath))) {
-      missingPaths.push(reqPath);
-    }
-  }
-
-  if (missingPaths.length > 0) {
-    const err = new Error(
-      `Missing required folders:\n${missingPaths
-        .map(p => `- ./${p}`)
-        .join('\n')}`
-    );
-    delete err.stack;
-    throw err;
-  }
-};
-
-const checkPluginsConflicts = ({ appPath, installedPlugins }) => {
-  const localPluginNames = fs.readdirSync(path.resolve(appPath, 'plugins'));
-  const pluginsIntersection = _.intersection(
-    localPluginNames,
-    installedPlugins
-  );
-
-  if (pluginsIntersection.length > 0) {
-    throw new Error(
-      `You have some local plugins with the same name as npm installed plugins (${pluginsIntersection.join(
-        ','
-      )}).`
-    );
-  }
-};
 
 module.exports = options => {
   const strapi = new Strapi(options);
