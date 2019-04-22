@@ -120,3 +120,4 @@ dist
 
 packages/strapi-generate-new/files/public/
 packages/*/yarn.lock
+
