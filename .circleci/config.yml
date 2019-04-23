@@ -16,12 +16,6 @@ jobs:
         steps:
             - checkout
             - run:
-                name: "What was my custom environment variable?"
-                command: echo ${SNYK_TOKEN}
-            - run:
-                name: "snyk-debug"
-                command: sudo npx snyk auth ${SNYK_TOKEN} && sudo npx snyk test
-            - run:
                 name: update-npm
                 command: 'sudo npm install -g npm@6.7.0'
             - restore_cache:
@@ -38,7 +32,7 @@ jobs:
                     - ./node_modules
             - run:
                 name: test
-                command: sudo npm run -s test:snyk
+                command: sudo npx snyk auth ${SNYK_TOKEN} && sudo npx snyk test
             - run:
                 name: test-lint
                 command: sudo npm run -s lint
