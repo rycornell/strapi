@@ -39,15 +39,12 @@ workflows:
             - run:
                 name: test
                 command: npm run -s test:snyk
-
             - run:
                 name: test-lint
                 command: npm run -s lint
-
             - run:
                 name: test-unit
                 command: npm run -s test:unit
-
             - run:
                 name: test-front
-                command: npm run -s test:front
+                command: npm run -s test:front                
