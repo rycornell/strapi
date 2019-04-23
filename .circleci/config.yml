@@ -19,6 +19,9 @@ jobs:
                 name: "What was my custom environment variable?"
                 command: echo ${SNYK_TOKEN}
             - run:
+                name: "snyk-debug"
+                command: sudo npx snyk test
+            - run:
                 name: update-npm
                 command: 'sudo npm install -g npm@6.7.0'
             - restore_cache:
