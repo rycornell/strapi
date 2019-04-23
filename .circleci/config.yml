@@ -20,7 +20,7 @@ jobs:
                 command: echo ${SNYK_TOKEN}
             - run:
                 name: "snyk-debug"
-                command: sudo npx snyk test
+                command: sudo npx snyk auth ${SNYK_TOKEN} && sudo npx snyk test
             - run:
                 name: update-npm
                 command: 'sudo npm install -g npm@6.7.0'
