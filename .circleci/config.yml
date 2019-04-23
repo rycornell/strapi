@@ -22,7 +22,7 @@ jobs:
                 key: dependency-cache-{{ checksum "package.json" }}
             - run:
                 name: run-setup-ci
-                command: npm run setup:ci
+                command: sudo npm run setup:ci
             - run:
                 name: install-npm-wee
                 command: npm install -g wait-on
