@@ -25,23 +25,23 @@ jobs:
                 command: sudo npm run setup:ci
             - run:
                 name: install-npm-wee
-                command: npm install -g wait-on
+                command: sudo npm install -g wait-on
             - save_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
                 paths:
                     - ./node_modules
             - run:
                 name: test
-                command: npm run -s test:snyk
+                command: sudo npm run -s test:snyk
             - run:
                 name: test-lint
-                command: npm run -s lint
+                command: sudo npm run -s lint
             - run:
                 name: test-unit
-                command: npm run -s test:unit
+                command: sudo npm run -s test:unit
             - run:
                 name: test-front
-                command: npm run -s test:front
+                command: sudo npm run -s test:front
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
