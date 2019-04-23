@@ -9,39 +9,39 @@ orbs:
 # Run the welcome/run job in its own container
 jobs:
     build:
-    working_directory: ~/mern-starter
-    docker:
-        - image: circleci/node:4.8.2
-        - image: circleci/postgres:9.6-alpine
-    steps:
-        - checkout
-        - run:
-            name: update-npm
-            command: 'sudo npm install -g npm@5'
-        - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
-        - run:
-            name: run-setup-ci
-            command: npm run setup:ci
-        - run:
-            name: install-npm-wee
-            command: npm install -g wait-on
-        - save_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
-            paths:
-                - ./node_modules
-        - run:
-            name: test
-            command: npm run -s test:snyk
-        - run:
-            name: test-lint
-            command: npm run -s lint
-        - run:
-            name: test-unit
-            command: npm run -s test:unit
-        - run:
-            name: test-front
-            command: npm run -s test:front
+        working_directory: ~/mern-starter
+        docker:
+            - image: circleci/node:4.8.2
+            - image: circleci/postgres:9.6-alpine
+        steps:
+            - checkout
+            - run:
+                name: update-npm
+                command: 'sudo npm install -g npm@5'
+            - restore_cache:
+                key: dependency-cache-{{ checksum "package.json" }}
+            - run:
+                name: run-setup-ci
+                command: npm run setup:ci
+            - run:
+                name: install-npm-wee
+                command: npm install -g wait-on
+            - save_cache:
+                key: dependency-cache-{{ checksum "package.json" }}
+                paths:
+                    - ./node_modules
+            - run:
+                name: test
+                command: npm run -s test:snyk
+            - run:
+                name: test-lint
+                command: npm run -s lint
+            - run:
+                name: test-unit
+                command: npm run -s test:unit
+            - run:
+                name: test-front
+                command: npm run -s test:front
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
