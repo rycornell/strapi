@@ -31,6 +31,7 @@ jobs:
                 paths:
                     - ~/app
     test:
+        working_directory: ~/app
         docker:
             - image: circleci/node:11.14.0
         steps:
