@@ -36,6 +36,8 @@ jobs:
         steps:
             # - restore_cache:
             #     key: dependency-cache-{{ checksum "package.json" }}
+            - run: pwd
+            - run: ls
             - run:
                 name: test
                 command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
