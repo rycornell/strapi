@@ -3,9 +3,9 @@ version: 2.1
 
 # end to end testing template
 e2e_tests: &e2e_tests
-    - run: npm run -s test:generate-app -- $DB_STRING
-    - run: npm run -s test:start-app & wait-on http://localhost:1337
-    - run: npm run -s test:e2e
+    - run: npm run test:generate-app -- $DB_STRING
+    - run: npm run test:start-app & wait-on http://localhost:1337
+    - run: npm run test:e2e
 
 # Define the jobs
 jobs:
@@ -36,16 +36,16 @@ jobs:
         steps:
             - run:
                 name: test
-                command: sudo npx snyk auth ${SNYK_TOKEN} && sudo npm run -s test:snyk
+                command: sudo npx snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
             - run:
                 name: test-lint
-                command: sudo npm run -s lint
+                command: sudo npm run lint
             - run:
                 name: test-unit
-                command: sudo npm run -s test:unit
+                command: sudo npm run test:unit
             - run:
                 name: test-front
-                command: sudo npm run -s test:front
+                command: sudo npm run test:front
 
     # <<: *e2e_tests:
     #     docker:
