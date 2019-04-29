@@ -15,9 +15,6 @@ jobs:
             - image: circleci/node:11.14.0
         steps:
             - checkout
-            # - run:
-            #     name: update-npm
-            #     command: 'sudo npm install -g npm@6.7.0'
             - restore_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
             - run:
@@ -38,8 +35,6 @@ jobs:
             - checkout
             - restore_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
-            - run: pwd
-            - run: ls
             - run:
                 name: test
                 command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
@@ -73,11 +68,9 @@ jobs:
     #         - image: circleci/node:11.14.0
     #         - image: circleci/postgres:mongo
 
-# Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
 workflows:
   version: 2
   build_and_test:
-    # Run the welcome/run job in its own container
     jobs:   
         - build
         - test:
