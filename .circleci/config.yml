@@ -58,7 +58,7 @@ jobs:
         steps:            
             - restore_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
-            <<: *e2e_tests
+            - <<: *e2e_tests
         
 
     # e2e_test_mysql:
