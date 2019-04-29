@@ -68,11 +68,12 @@ jobs:
             - run:
                 name: test-unit
                 command: sudo npm run test:unit
-            - run:
-                name: test-front
-                command: sudo npm run test:front
+            # - run:
+            #     name: test-front
+            #     command: sudo npm run test:front
 
     e2e_tests_postgres:
+        working_directory: ~/app
         docker:
             - image: circleci/node:11.14.0
             - image: circleci/postgres:9.6-alpine
