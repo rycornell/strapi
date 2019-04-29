@@ -23,6 +23,9 @@ jobs:
             - run:
                 name: install-npm-wee
                 command: sudo npm install -g wait-on
+            - run:
+                name: snyk
+                command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
             - save_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
                 paths:
@@ -35,9 +38,9 @@ jobs:
             - checkout
             - restore_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
-            - run:
-                name: test
-                command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
+            # - run:
+            #     name: test
+            #     command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
             - run:
                 name: test-lint
                 command: sudo npm run lint
@@ -48,10 +51,15 @@ jobs:
                 name: test-front
                 command: sudo npm run test:front
 
-    # <<: *e2e_tests:
-    #     docker:
-    #         - image: circleci/node:11.14.0
-    #         - image: circleci/postgres:9.6-alpine
+    e2e_tests_postgres:
+        docker:
+            - image: circleci/node:11.14.0
+            - image: circleci/postgres:9.6-alpine
+        steps:            
+            - restore_cache:
+                key: dependency-cache-{{ checksum "package.json" }}
+            <<: *e2e_tests
+        
 
     # e2e_test_mysql:
     #     docker:
