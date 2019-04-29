@@ -10,7 +10,7 @@ e2e_tests: &e2e_tests
 # Define the jobs
 jobs:
     build:
-        # working_directory: ~/app
+        working_directory: ~/app
         docker:
             - image: circleci/node:11.14.0
         steps:
@@ -29,13 +29,13 @@ jobs:
             - save_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
                 paths:
-                    - ./node_modules            
+                    - ~/app
     test:
         docker:
             - image: circleci/node:11.14.0
         steps:
-            # - restore_cache:
-            #     key: dependency-cache-{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-{{ checksum "package.json" }}
             - run: pwd
             - run: ls
             - run:
