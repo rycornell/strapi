@@ -15,30 +15,38 @@ jobs:
             - image: circleci/node:11.14.0
         steps:
             - checkout
-            - restore_cache:
-                key: dependency-cache-{{ checksum "package.json" }}
+            # - restore_cache:
+            #     key: dependency-cache-{{ checksum "package.json" }}
             - run:
                 name: run-setup-ci
                 command: sudo npm run setup:ci
             - run:
                 name: install-npm-wee
                 command: sudo npm install -g wait-on
-            - run:
-                name: snyk
-                command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
-            - run:
-                name: test-lint
-                command: sudo npm run lint
-            - run:
-                name: test-unit
-                command: sudo npm run test:unit
+            # - run:
+            #     name: snyk
+            #     command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
+            # - run:
+            #     name: test-lint
+            #     command: sudo npm run lint
+            # - run:
+            #     name: test-unit
+            #     command: sudo npm run test:unit
             # - run:
             #     name: test-front
             #     command: sudo npm run test:front
             - save_cache:
-                key: dependency-cache-{{ checksum "package.json" }}
+                key: dependency-cache-app{{ checksum "package.json" }}
                 paths:
                     - ~/app
+            - save_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+                paths:
+                    - ~/.npm
+            - save_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
+                paths:
+                    - ~/.cache
     test:
         working_directory: ~/app
         docker:
@@ -46,7 +54,11 @@ jobs:
         steps:
             - checkout
             - restore_cache:
-                key: dependency-cache-{{ checksum "package.json" }}
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
             # - run:
             #     name: test
             #     command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
@@ -66,7 +78,11 @@ jobs:
             - image: circleci/postgres:9.6-alpine
         steps:            
             - restore_cache:
-                key: dependency-cache-{{ checksum "package.json" }}
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
             - <<: *e2e_tests
         
 
@@ -90,6 +106,9 @@ workflows:
   build_and_test:
     jobs:   
         - build
+        - test:
+            requires:
+                - build
         - e2e_tests_postgres:
             requires:
                 - build
