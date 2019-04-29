@@ -26,6 +26,15 @@ jobs:
             - run:
                 name: snyk
                 command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
+            - run:
+                name: test-lint
+                command: sudo npm run lint
+            - run:
+                name: test-unit
+                command: sudo npm run test:unit
+            - run:
+                name: test-front
+                command: sudo npm run test:front
             - save_cache:
                 key: dependency-cache-{{ checksum "package.json" }}
                 paths:
