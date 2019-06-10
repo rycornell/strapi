@@ -61,13 +61,18 @@ jobs:
                 key: dependency-cache-cache{{ checksum "package.json" }}
             - run:
                 name: test
-                command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
+                #command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
+                command: yarn run -s test:snyk
             - run:
-                name: test-lint
-                command: sudo npm run lint
-            - run:
-                name: test-unit
-                command: sudo npm run test:unit
+                name: 'Lint / Unit Tests'
+                command: |
+                  #sudo npm run lint
+                  yarn run -s lint
+                  yarn run -s test:unit
+                  yarn run -s test:front
+            # - run:
+            #     name: test-unit
+            #     command: sudo npm run test:unit
             # - run:
             #     name: test-front
             #     command: sudo npm run test:front
