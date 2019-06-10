@@ -90,6 +90,9 @@ jobs:
                 key: dependency-cache-npm{{ checksum "package.json" }}
             - restore_cache:
                 key: dependency-cache-cache{{ checksum "package.json" }}
+            - run:
+              command: psql -c 'create database strapi_test;' -U postgres
+              # - DB_STRING='--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
             - <<: *e2e_tests
         
 
