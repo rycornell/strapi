@@ -44,4 +44,5 @@ module.exports = {
       '<rootDir>/fileTransformer.js',
   },
   testURL: 'http://localhost:4000/admin',
+  maxWorkers: 2
 };
