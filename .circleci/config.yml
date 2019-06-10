@@ -1,15 +1,116 @@
 # Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
-version: 2.1
+version: 2.1    
 
-# Use a package of configuration called an orb, see https://circleci.com/docs/2.0/orb-intro/
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.3.1
+# end to end testing template
+e2e_tests: &e2e_tests
+    - run: npm run test:generate-app -- $DB_STRING
+    - run: npm run test:start-app & wait-on http://localhost:1337
+    - run: npm run test:e2e
 
-# Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
+# Define the jobs
+jobs:
+    build:
+        working_directory: ~/app
+        docker:
+            - image: circleci/node:10
+        steps:
+            - checkout
+            # - restore_cache:
+            #     key: dependency-cache-{{ checksum "package.json" }}
+            - run:
+                name: yarn setup
+                command: yarn setup
+            - run:
+                name: yarn global add -g wait-on
+                command: yarn global add -g wait-on
+            # - run:
+            #     name: snyk
+            #     command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
+            # - run:
+            #     name: test-lint
+            #     command: sudo npm run lint
+            # - run:
+            #     name: test-unit
+            #     command: sudo npm run test:unit
+            # - run:
+            #     name: test-front
+            #     command: sudo npm run test:front
+            - save_cache:
+                key: dependency-cache-app{{ checksum "package.json" }}
+                paths:
+                    - ~/app
+            - save_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+                paths:
+                    - ~/.npm
+            - save_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
+                paths:
+                    - ~/.cache
+    test:
+        working_directory: ~/app
+        docker:
+            - image: circleci/node:10
+        steps:
+            - checkout
+            - restore_cache:
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
+            - run:
+                name: test
+                command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
+            - run:
+                name: test-lint
+                command: sudo npm run lint
+            - run:
+                name: test-unit
+                command: sudo npm run test:unit
+            # - run:
+            #     name: test-front
+            #     command: sudo npm run test:front
+
+    e2e_tests_postgres:
+        working_directory: ~/app
+        docker:
+            - image: circleci/node:10
+            - image: circleci/postgres:9.6-alpine
+        steps:        
+            - checkout    
+            - restore_cache:
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
+            - <<: *e2e_tests
+        
+
+    # e2e_test_mysql:
+    #     docker:
+    #         - image: circleci/node:11.14.0
+    #         - image: circleci/mysql
+
+    # e2e_test_sqllite:
+    #     docker:
+    #         - image: circleci/node:11.14.0
+    #         - image: circleci/postgres:9.6-alpine
+
+    # e2e_test_mongo:
+    #     docker:
+    #         - image: circleci/node:11.14.0
+    #         - image: circleci/postgres:mongo
+
 workflows:
-  # Name the workflow "Welcome"
-  Welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - welcome/run
+  version: 2
+  build_and_test:
+    jobs:   
+        - build
+        - test:
+            requires:
+                - build
+        - e2e_tests_postgres:
+            requires:
+                - build
