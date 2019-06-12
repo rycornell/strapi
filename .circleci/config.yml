@@ -96,7 +96,7 @@ jobs:
             - run:
                 environment:
                     DB_STRING: '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
-                command: psql -c 'create database strapi_test;' -U postgres
+                command: psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
             - <<: *e2e_tests
         
 
