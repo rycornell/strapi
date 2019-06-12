@@ -18,44 +18,42 @@ jobs:
             - image: circleci/node:10
         steps:
             - checkout
-            - restore_cache:
-                key: yarn-packages-{{ checksum "yarn.lock" }}
             - run:
                 name: yarn setup
                 command: yarn setup
             - run:
                 name: yarn global add -g wait-on
                 command: yarn global add -g wait-on
+            # - save_cache:
+            #     key: yarn-packages-{{ checksum "yarn.lock" }}
+            #     paths:
+            #         - ~/.cache/yarn                
             - save_cache:
-                key: yarn-packages-{{ checksum "yarn.lock" }}
+                key: dependency-cache-app{{ checksum "package.json" }}
                 paths:
-                    - ~/.cache/yarn
-                
-            #     key: dependency-cache-app{{ checksum "package.json" }}
-            #     paths:
-            #         - ~/app
-            # - save_cache:
-            #     key: dependency-cache-npm{{ checksum "package.json" }}
-            #     paths:
-            #         - ~/.npm
-            # - save_cache:
-            #     key: dependency-cache-cache{{ checksum "package.json" }}
-            #     paths:
-            #         - ~/.cache
+                    - ~/app
+            - save_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+                paths:
+                    - ~/.npm
+            - save_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
+                paths:
+                    - ~/.cache
     test:
         working_directory: ~/app
         docker:
             - image: circleci/node:10
         steps:
             - checkout
-            # - restore_cache:
-            #     key: dependency-cache-app{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: dependency-cache-npm{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: dependency-cache-cache{{ checksum "package.json" }}
             - restore_cache:
-                key: yarn-packages-{{ checksum "yarn.lock" }}
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
+            # - restore_cache:
+            #     key: yarn-packages-{{ checksum "yarn.lock" }}
             - run:
                 name: test
                 #command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
@@ -63,7 +61,6 @@ jobs:
             - run:
                 name: 'Lint / Unit Tests'
                 command: |
-                  #sudo npm run lint
                   yarn run -s lint
                   yarn run -s test:unit
                   yarn run -s test:front
@@ -76,15 +73,15 @@ jobs:
             - image: circleci/node:10
             - image: circleci/postgres:9.6-alpine        
         steps:        
-            - checkout    
-            # - restore_cache:
-            #     key: dependency-cache-app{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: dependency-cache-npm{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: dependency-cache-cache{{ checksum "package.json" }}
+            - checkout
             - restore_cache:
-                key: yarn-packages-{{ checksum "yarn.lock" }}
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
+            # - restore_cache:
+            #     key: yarn-packages-{{ checksum "yarn.lock" }}
             - run:
                 name: Installing Dependencies
                 command: |
