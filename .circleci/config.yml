@@ -27,7 +27,7 @@ jobs:
                 name: yarn global add -g wait-on
                 command: yarn global add -g wait-on
             - save_cache:
-                key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+                key: yarn-packages-{{ checksum "yarn.lock" }}
                 paths:
                     - ~/.cache/yarn
                 
