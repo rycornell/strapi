@@ -85,11 +85,11 @@ jobs:
             #     key: dependency-cache-cache{{ checksum "package.json" }}
             - restore_cache:
                 key: yarn-packages-{{ checksum "yarn.lock" }}
-            # - run:
-            #     name: Installing Dependencies
-            #     command: |
-            #         # yarn install
-            #         # sudo apt-get install postgresql-client
+            - run:
+                name: Installing Dependencies
+                command: |
+                    # yarn install
+                    sudo apt-get install postgresql-client
             - run:                
                 command: psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
             - <<: *e2e_tests            
