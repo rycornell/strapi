@@ -3,9 +3,12 @@ version: 2.1
 
 # end to end testing template
 e2e_tests: &e2e_tests
-    - run: npm run test:generate-app -- $DB_STRING
-    - run: npm run test:start-app & wait-on http://localhost:1337
-    - run: npm run test:e2e
+    - run:
+        name: 'Run E2E Tests'
+        command: |
+            npm run test:generate-app -- $DB_STRING
+            npm run test:start-app & wait-on http://localhost:1337
+            npm run test:e2e
 
 # Define the jobs
 jobs:
@@ -81,7 +84,7 @@ jobs:
         working_directory: ~/app
         docker:
             - image: circleci/node:10
-            - image: circleci/postgres:9.6-alpine
+            - image: circleci/postgres:9.6-alpine        
         steps:        
             - checkout    
             - restore_cache:
@@ -91,8 +94,9 @@ jobs:
             - restore_cache:
                 key: dependency-cache-cache{{ checksum "package.json" }}
             - run:
-              command: psql -c 'create database strapi_test;' -U postgres
-              # - DB_STRING='--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+                environment:
+                    DB_STRING: '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+                command: psql -c 'create database strapi_test;' -U postgres
             - <<: *e2e_tests
         
 
