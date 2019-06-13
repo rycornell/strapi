@@ -53,10 +53,8 @@ jobs:
         steps:
             - attach_workspace:
                 at: ~/
-            # - <<: *restore_all_cache
             - run:
                 name: test
-                #command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
                 command: yarn run -s test:snyk
             - run:
                 name: 'Lint / Unit Tests'
@@ -75,11 +73,10 @@ jobs:
         steps:        
             - attach_workspace:
                 at: ~/
-            # - <<: *restore_all_cache
             - run:
                 name: Installing Dependencies
                 command: |
-                    yarn
+                    #yarn
                     sudo apt-get install postgresql-client
             - run:                
                 command: psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
@@ -114,11 +111,7 @@ jobs:
                     echo Failed waiting for MySQL && exit 1
             - run:
                 name: Installing Dependencies
-                command: |
-                    # yarn
-                    sudo apt install mysql-client
-            # - run:                
-            #     command: mysql -h 127.0.0.1 -u circleci -ppassw0rd -e 'CREATE DATABASE strapi_test;'
+                command: sudo apt install mysql-client
             - <<: *e2e_tests
 
     e2e_tests_sqllite:
@@ -142,20 +135,7 @@ jobs:
         steps:        
             - attach_workspace:
                 at: ~/
-            # - <<: *restore_all_cache
-            # - run:
-            #     name: Installing Dependencies
-            #     command: |
-            #         yarn
-            #         sudo apt-get install postgresql-client
-            # - run:                
-            #     command: psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
             - <<: *e2e_tests
-
-    # e2e_test_mongo:
-    #     docker:
-    #         - image: circleci/node:11.14.0
-    #         - image: circleci/postgres:mongo
 
 workflows:
   version: 2
