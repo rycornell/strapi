@@ -9,6 +9,15 @@ e2e_tests: &e2e_tests
             yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
             yarn run -s test:e2e
 
+# restore cache template
+restore_all_cache: &restore_all_cache
+    - restore_cache:
+        key: dependency-cache-app{{ checksum "package.json" }}
+    - restore_cache:
+        key: dependency-cache-npm{{ checksum "package.json" }}
+    - restore_cache:
+        key: dependency-cache-cache{{ checksum "package.json" }}
+
 # Define the jobs
 jobs:
     build:
@@ -46,14 +55,7 @@ jobs:
             - image: circleci/node:10
         steps:
             - checkout
-            - restore_cache:
-                key: dependency-cache-app{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-npm{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-cache{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: yarn-packages-{{ checksum "yarn.lock" }}
+            - <<: *restore_all_cache
             - run:
                 name: test
                 #command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
@@ -74,23 +76,34 @@ jobs:
             - image: circleci/postgres:9.6-alpine        
         steps:        
             - checkout
-            - restore_cache:
-                key: dependency-cache-app{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-npm{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-cache{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: yarn-packages-{{ checksum "yarn.lock" }}
+            - <<: *restore_all_cache
             - run:
                 name: Installing Dependencies
                 command: |
-                    #yarn global add -g wait-on
                     yarn
                     sudo apt-get install postgresql-client
             - run:                
                 command: psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
             - <<: *e2e_tests            
+
+    e2e_tests_mysql:
+        working_directory: ~/app
+        environment:
+            DB_STRING: '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=travis --dbpassword='
+        docker:
+            - image: circleci/node:10
+            - image: circleci/mysql
+        steps:        
+            - checkout
+            - <<: *restore_all_cache
+            # - run:
+            #     name: Installing Dependencies
+            #     command: |
+            #         yarn
+            #         sudo apt-get install postgresql-client
+            - run:                
+                command: mysql -e 'CREATE DATABASE strapi_test;'
+            - <<: *e2e_tests
         
 
     # e2e_test_mysql:
