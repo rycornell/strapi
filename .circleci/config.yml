@@ -124,8 +124,8 @@ jobs:
                 command: |
                     # yarn
                     sudo apt install mysql-client
-            - run:                
-                command: mysql -h 127.0.0.1 -u circleci -ppassw0rd -e 'CREATE DATABASE strapi_test;'
+            # - run:                
+            #     command: mysql -h 127.0.0.1 -u circleci -ppassw0rd -e 'CREATE DATABASE strapi_test;'
             - <<: *e2e_tests
 
     # e2e_test_sqllite:
