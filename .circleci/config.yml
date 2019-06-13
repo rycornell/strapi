@@ -95,10 +95,15 @@ jobs:
     e2e_tests_mysql:
         working_directory: ~/app        
         environment:
-            DB_STRING: '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=travis --dbpassword='
+            DB_STRING: '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=circleci --dbpassword=passw0rd'
         docker:
             - image: circleci/node:10
             - image: circleci/mysql
+              environment:
+                    MYSQL_ROOT_PASSWORD: rootpw
+                    MYSQL_DATABASE: strapi_test
+                    MYSQL_USER: circleci
+                    MYSQL_PASSWORD: passw0rd
         steps:        
             - attach_workspace:
                 at: ~/
@@ -109,7 +114,7 @@ jobs:
                     # yarn
                     sudo apt install mysql-client
             - run:                
-                command: mysql -h localhost -e 'CREATE DATABASE strapi_test;'
+                command: mysql -h 127.0.0.1 -u circleci -e 'CREATE DATABASE strapi_test;'
             - <<: *e2e_tests
 
     # e2e_test_sqllite:
