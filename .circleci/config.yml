@@ -103,11 +103,11 @@ jobs:
             - attach_workspace:
                 at: ~/
             # - <<: *restore_all_cache
-            # - run:
-            #     name: Installing Dependencies
-            #     command: |
-            #         yarn
-            #         sudo apt-get install postgresql-client
+            - run:
+                name: Installing Dependencies
+                command: |
+                    # yarn
+                    sudo apt install mysql-client
             - run:                
                 command: mysql -e 'CREATE DATABASE strapi_test;'
             - <<: *e2e_tests
