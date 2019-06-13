@@ -127,7 +127,18 @@ jobs:
             DB_STRING: '--dbclient=sqlite --dbfile=./tmp/data.db'
         docker:
             - image: circleci/node:10
-            # - image: circleci/postgres:9.6-alpine        
+        steps:        
+            - attach_workspace:
+                at: ~/
+            - <<: *e2e_tests
+
+    e2e_tests_mongo:
+        working_directory: ~/app
+        environment:
+            DB_STRING: '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
+        docker:
+            - image: circleci/node:10
+            - image: circleci/mongo:4
         steps:        
             - attach_workspace:
                 at: ~/
