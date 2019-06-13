@@ -109,7 +109,7 @@ jobs:
                     # yarn
                     sudo apt install mysql-client
             - run:                
-                command: mysql -e 'CREATE DATABASE strapi_test;'
+                command: mysql -h localhost -e 'CREATE DATABASE strapi_test;'
             - <<: *e2e_tests
 
     # e2e_test_sqllite:
