@@ -9,15 +9,6 @@ e2e_tests: &e2e_tests
             yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
             yarn run -s test:e2e
 
-# restore cache template
-restore_all_cache: &restore_all_cache
-    - restore_cache:
-        key: dependency-cache-app{{ checksum "package.json" }}
-    - restore_cache:
-        key: dependency-cache-npm{{ checksum "package.json" }}
-    - restore_cache:
-        key: dependency-cache-cache{{ checksum "package.json" }}
-
 # Define the jobs
 jobs:
     build:
@@ -26,16 +17,18 @@ jobs:
             - image: circleci/node:10
         steps:
             - checkout
+            - restore_cache:
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
             - run:
                 name: yarn setup
                 command: yarn setup
             - run:
                 name: yarn global add -g wait-on
-                command: yarn global add -g wait-on
-            # - save_cache:
-            #     key: yarn-packages-{{ checksum "yarn.lock" }}
-            #     paths:
-            #         - ~/.cache/yarn                
+                command: yarn global add -g wait-on            
             - save_cache:
                 key: dependency-cache-app{{ checksum "package.json" }}
                 paths:
@@ -128,10 +121,25 @@ jobs:
             #     command: mysql -h 127.0.0.1 -u circleci -ppassw0rd -e 'CREATE DATABASE strapi_test;'
             - <<: *e2e_tests
 
-    # e2e_test_sqllite:
-    #     docker:
-    #         - image: circleci/node:11.14.0
-    #         - image: circleci/postgres:9.6-alpine
+    e2e_tests_sqllite:
+        working_directory: ~/app
+        environment:
+            DB_STRING: '--dbclient=sqlite --dbfile=./tmp/data.db'
+        docker:
+            - image: circleci/node:10
+            # - image: circleci/postgres:9.6-alpine        
+        steps:        
+            - attach_workspace:
+                at: ~/
+            # - <<: *restore_all_cache
+            # - run:
+            #     name: Installing Dependencies
+            #     command: |
+            #         yarn
+            #         sudo apt-get install postgresql-client
+            # - run:                
+            #     command: psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
+            - <<: *e2e_tests
 
     # e2e_test_mongo:
     #     docker:
@@ -150,5 +158,8 @@ workflows:
             requires:
                 - build
         - e2e_tests_mysql:
+            requires:
+                - build
+        - e2e_tests_sqllite:
             requires:
                 - build
