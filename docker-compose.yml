@@ -21,7 +21,7 @@ services:
       - .:/app
     links:
       - postgres:postgres
-    entrypoint: wait-for-it.sh postgres:5432 -s --
+    # entrypoint: wait-for-it.sh postgres:5432 -s --
 
   mysql_tests:
     image: node:10
