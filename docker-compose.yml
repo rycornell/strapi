@@ -19,8 +19,9 @@ services:
     image: node:10
     volumes:
       - .:/app
-    depends_on:
-      - postgres
+    links:
+      - postgres:postgres
+    entrypoint: wait-for-it.sh postgres:5432 -s --
 
   mysql_tests:
     image: node:10
