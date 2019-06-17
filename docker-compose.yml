@@ -21,7 +21,21 @@ services:
       - .:/app
     links:
       - postgres:postgres
-    # entrypoint: wait-for-it.sh postgres:5432 -s --
+    environment:
+      PGHOST: db
+      PGUSER: postgres
+      # CI envs
+      CI:
+      RAILS_ENV:
+      # CI envs For Knapsack
+      BUILDKITE_PARALLEL_JOB:
+      BUILDKITE_PARALLEL_JOB_COUNT:
+      BUILDKITE_COMMIT:
+      BUILDKITE_BRANCH:
+      BUILDKITE_REPO:
+      BUILDKITE_BUILD_ID:
+      BUILDKITE_BUILD_NUMBER:
+    entrypoint: wait-for-it.sh db:5432 -s --
 
   mysql_tests:
     image: node:10

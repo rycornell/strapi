@@ -1,15 +1,23 @@
 FROM node:10
 
-RUN mkdir /app
+# Add official postgresql apt deb source
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+    && apt-get update \
+    && apt-get install -y postgresql-client-10
+
+# Add the wait-for-it.sh script for waiting on dependent containers
+RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /usr/local/bin/wait-for-it.sh \
+    && chmod +x /usr/local/bin/wait-for-it.sh
+
 WORKDIR /app
 
-ENV PATH /app/node_modules/.bin:$PATH
-
-# COPY package.json package-lock.json /app/
-#RUN npm install
-
-# Or if you're using Yarn
 ADD package.json yarn.lock /app/
-RUN yarn && yarn build
+RUN yarn setup
 
-COPY . /app/
+# Now add the rest of your code
+ADD . /app/
+
+# Clean up
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /app/log/*
