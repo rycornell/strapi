@@ -16,7 +16,7 @@ services:
       # - mongo
 
   postgres_tests:
-    image: node:10
+    build: .
     volumes:
       - .:/app
     links:
