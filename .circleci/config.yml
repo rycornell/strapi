@@ -17,16 +17,18 @@ jobs:
             - image: circleci/node:10
         steps:
             - checkout
+            - restore_cache:
+                key: dependency-cache-app{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-npm{{ checksum "package.json" }}
+            - restore_cache:
+                key: dependency-cache-cache{{ checksum "package.json" }}
             - run:
                 name: yarn setup
                 command: yarn setup
             - run:
                 name: yarn global add -g wait-on
-                command: yarn global add -g wait-on
-            # - save_cache:
-            #     key: yarn-packages-{{ checksum "yarn.lock" }}
-            #     paths:
-            #         - ~/.cache/yarn                
+                command: yarn global add -g wait-on            
             - save_cache:
                 key: dependency-cache-app{{ checksum "package.json" }}
                 paths:
@@ -39,24 +41,20 @@ jobs:
                 key: dependency-cache-cache{{ checksum "package.json" }}
                 paths:
                     - ~/.cache
+            - persist_to_workspace:
+                root: ~/
+                paths:
+                    - app
                     
     test:
         working_directory: ~/app
         docker:
-            - image: circleci/node:10
+            - image: circleci/node:10        
         steps:
-            - checkout
-            - restore_cache:
-                key: dependency-cache-app{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-npm{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-cache{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: yarn-packages-{{ checksum "yarn.lock" }}
+            - attach_workspace:
+                at: ~/
             - run:
                 name: test
-                #command: sudo node ./node_modules/.bin/snyk auth ${SNYK_TOKEN} && sudo npm run test:snyk
                 command: yarn run -s test:snyk
             - run:
                 name: 'Lint / Unit Tests'
@@ -73,40 +71,71 @@ jobs:
             - image: circleci/node:10
             - image: circleci/postgres:9.6-alpine        
         steps:        
-            - checkout
-            - restore_cache:
-                key: dependency-cache-app{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-npm{{ checksum "package.json" }}
-            - restore_cache:
-                key: dependency-cache-cache{{ checksum "package.json" }}
-            # - restore_cache:
-            #     key: yarn-packages-{{ checksum "yarn.lock" }}
+            - attach_workspace:
+                at: ~/
             - run:
                 name: Installing Dependencies
                 command: |
-                    #yarn global add -g wait-on
-                    yarn
+                    #yarn
                     sudo apt-get install postgresql-client
             - run:                
                 command: psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
             - <<: *e2e_tests            
-        
 
-    # e2e_test_mysql:
-    #     docker:
-    #         - image: circleci/node:11.14.0
-    #         - image: circleci/mysql
+    e2e_tests_mysql:
+        working_directory: ~/app        
+        environment:
+            DB_STRING: '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=circleci --dbpassword=passw0rd'
+        docker:
+            - image: circleci/node:10
+            - image: circleci/mysql
+              command: [--default-authentication-plugin=mysql_native_password]
+              environment:
+                    MYSQL_ROOT_PASSWORD: rootpw
+                    MYSQL_DATABASE: strapi_test
+                    MYSQL_USER: circleci
+                    MYSQL_PASSWORD: passw0rd
+        steps:        
+            - attach_workspace:
+                at: ~/
+            - run:
+             # Our primary container isn't MYSQL so run a sleep command until it's ready.
+                name: Waiting for MySQL to be ready
+                command: |
+                    for i in `seq 1 10`;
+                    do
+                    nc -z 127.0.0.1 3306 && echo Success && exit 0
+                    echo -n .
+                    sleep 1
+                    done
+                    echo Failed waiting for MySQL && exit 1
+            - run:
+                name: Installing Dependencies
+                command: sudo apt install mysql-client
+            - <<: *e2e_tests
 
-    # e2e_test_sqllite:
-    #     docker:
-    #         - image: circleci/node:11.14.0
-    #         - image: circleci/postgres:9.6-alpine
+    e2e_tests_sqllite:
+        working_directory: ~/app
+        environment:
+            DB_STRING: '--dbclient=sqlite --dbfile=./tmp/data.db'
+        docker:
+            - image: circleci/node:10
+        steps:        
+            - attach_workspace:
+                at: ~/
+            - <<: *e2e_tests
 
-    # e2e_test_mongo:
-    #     docker:
-    #         - image: circleci/node:11.14.0
-    #         - image: circleci/postgres:mongo
+    e2e_tests_mongo:
+        working_directory: ~/app
+        environment:
+            DB_STRING: '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
+        docker:
+            - image: circleci/node:10
+            - image: circleci/mongo:4
+        steps:        
+            - attach_workspace:
+                at: ~/
+            - <<: *e2e_tests
 
 workflows:
   version: 2
@@ -117,5 +146,14 @@ workflows:
             requires:
                 - build
         - e2e_tests_postgres:
+            requires:
+                - build
+        - e2e_tests_mysql:
+            requires:
+                - build
+        - e2e_tests_sqllite:
+            requires:
+                - build
+        - e2e_tests_mongo:
             requires:
                 - build
