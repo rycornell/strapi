@@ -10,6 +10,6 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 # Or if you're using Yarn
 ADD package.json yarn.lock /app/
-RUN yarn install
+RUN yarn && yarn build
 
 COPY . /app/
