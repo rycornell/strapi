@@ -4,10 +4,33 @@ services:
   app:
     image: node:10
 
+  e2e_tests:
+    image: node:10
+    depends_on:
+      - postgres
+      - mysql
+      # - mongo
+
   postgres_tests:
     image: node:10
     depends_on:
       - postgres
 
+  mysql_tests:
+    image: node:10
+    depends_on:
+      - mysql
+
   postgres:
     image: postgres:9.6-alpine
+    ports:
+      - "54320:5432"
+    volumes:
+      - my_dbdata:/var/lib/postgresql/data
+
+  mysql:
+    image: mysql
+
+
+volumes:
+  my_dbdata:
