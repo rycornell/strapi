@@ -12,7 +12,7 @@ RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for
 
 WORKDIR /app
 
-ADD package.json yarn.lock /app/
+ADD *.json *.lock /app/
 RUN yarn setup
 
 # Now add the rest of your code
