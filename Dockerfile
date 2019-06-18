@@ -13,8 +13,8 @@ RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for
 WORKDIR /app
 
 #COPY *.json *.lock /app/
-COPY package.json yarn.lock ./
-RUN yarn
+COPY *.json *.lock ./
+RUN yarn setup
 
 # Now add the rest of your code
 COPY . ./
