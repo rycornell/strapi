@@ -13,12 +13,13 @@ RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for
 WORKDIR /app
 
 #COPY *.json *.lock /app/
-COPY *.json *.lock ./
+#COPY *.json *.lock ./
+COPY . ./
 RUN yarn setup
 RUN yarn global add -g wait-on
 
 # Now add the rest of your code
-COPY . ./
+#COPY . ./
 
 # Clean up
 RUN apt-get clean \
