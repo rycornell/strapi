@@ -12,11 +12,12 @@ RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for
 
 WORKDIR /app
 
-ADD *.json *.lock /app/
-RUN yarn setup
+#COPY *.json *.lock /app/
+COPY package.json yarn.lock ./
+RUN yarn
 
 # Now add the rest of your code
-ADD . /app/
+COPY . ./
 
 # Clean up
 RUN apt-get clean \
