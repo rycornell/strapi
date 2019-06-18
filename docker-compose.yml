@@ -15,13 +15,12 @@ services:
       - mysql
       # - mongo
 
-  postgres_tests:
+  buildkite_ci:
     build: .
-    # volumes:
-    #   - ./:/app
     links:
       - postgres:postgres
       - mysql:mysql
+      - mongo:mongo
     environment:
       PGHOST: db
       PGUSER: postgres
@@ -36,7 +35,7 @@ services:
       BUILDKITE_REPO:
       BUILDKITE_BUILD_ID:
       BUILDKITE_BUILD_NUMBER:
-    entrypoint: wait-for-it.sh postgres:5432 -s -- wait-for-it.sh mysql:3306 -s --
+    entrypoint: wait-for-it.sh postgres:5432 -s -- wait-for-it.sh mysql:3306 -s -- wait-for-it.sh mongo:27017 -s --
 
   mysql_tests:
     image: node:10
@@ -55,6 +54,9 @@ services:
       MYSQL_DATABASE: 'strapi_test'
       MYSQL_USER: 'ci'
       MYSQL_PASSWORD: 'passw0rd'
+
+  mongo:
+    image: mongo:4    
 
 volumes:
   my_dbdata:
