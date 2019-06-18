@@ -147,13 +147,13 @@ workflows:
                 - build
         - e2e_tests_postgres:
             requires:
-                - build
+                - test
         - e2e_tests_mysql:
             requires:
-                - build
+                - e2e_tests_postgres
         - e2e_tests_sqllite:
             requires:
-                - build
+                - e2e_tests_mysql
         - e2e_tests_mongo:
             requires:
-                - build
+                - e2e_tests_sqllite
