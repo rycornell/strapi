@@ -36,11 +36,6 @@ services:
       BUILDKITE_REPO:
       BUILDKITE_BUILD_ID:
       BUILDKITE_BUILD_NUMBER:
-      # MySQL
-      MYSQL_ROOT_PASSWORD: 'rootpw'
-      MYSQL_DATABASE: 'strapi_test'
-      MYSQL_USER: 'ci'
-      MYSQL_PASSWORD: 'passw0rd'
     entrypoint: wait-for-it.sh postgres:5432 -s -- wait-for-it.sh mysql:3306 -s --
 
   mysql_tests:
@@ -53,7 +48,13 @@ services:
 
   mysql:
     image: mysql
-
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'rootpw'
+      MYSQL_DATABASE: 'strapi_test'
+      MYSQL_USER: 'ci'
+      MYSQL_PASSWORD: 'passw0rd'
 
 volumes:
   my_dbdata:
