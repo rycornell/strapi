@@ -18,7 +18,7 @@ services:
   postgres_tests:
     build: .
     volumes:
-      - .:/app
+      - ./:/app
     links:
       - postgres:postgres
     environment:
