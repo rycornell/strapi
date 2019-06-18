@@ -15,6 +15,7 @@ WORKDIR /app
 #COPY *.json *.lock /app/
 COPY *.json *.lock ./
 RUN yarn setup
+RUN yarn global add -g wait-on
 
 # Now add the rest of your code
 COPY . ./
