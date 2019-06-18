@@ -35,7 +35,7 @@ services:
       BUILDKITE_REPO:
       BUILDKITE_BUILD_ID:
       BUILDKITE_BUILD_NUMBER:
-    entrypoint: wait-for-it.sh db:5432 -s --
+    entrypoint: wait-for-it.sh postgres:5432 -s --
 
   mysql_tests:
     image: node:10
