@@ -11,6 +11,16 @@ services:
   - postgres:latest
   - mongo:latest
 
+variables:
+  # Configure mysql environment variables (https://hub.docker.com/_/mysql/)
+  # POSTGRES_DB: nice_marmot
+  # POSTGRES_USER: runner
+  # POSTGRES_PASSWORD: ""
+  MYSQL_ROOT_PASSWORD: 'rootpw'
+  MYSQL_DATABASE: 'strapi_test'
+  MYSQL_USER: 'ci'
+  MYSQL_PASSWORD: 'passw0rd'
+
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
 cache:
@@ -31,7 +41,7 @@ build:
     - echo "*** STARTING Postgres Tests `date` ***"
     - apt-get update && apt-get install -y postgresql-client
     - psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
-    - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+    - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=postgres --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
     - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
     - yarn run -s test:e2e      
     - echo "*** FINISHED Postgres Tests `date` ***"
