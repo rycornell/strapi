@@ -54,12 +54,12 @@ build:
     # - yarn run -s test:e2e
     # - echo "*** FINISHED MySQL Tests `date` ***"
       
-    # SQL Lite
-    - echo "*** STARTING SQLLite Tests `date` ***"
-    - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
-    - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-    - yarn run -s test:e2e
-    - echo "*** FINISHED SQLLite Tests `date` ***"
+    # # SQL Lite
+    # - echo "*** STARTING SQLLite Tests `date` ***"
+    # - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
+    # - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+    # - yarn run -s test:e2e
+    # - echo "*** FINISHED SQLLite Tests `date` ***"
     
     # Mongo
     - echo "*** STARTING Mongo Tests `date` ***"
