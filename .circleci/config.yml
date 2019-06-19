@@ -17,8 +17,11 @@ jobs:
         steps:
             - checkout
             - run:
-                name: docker
+                name: docker build
                 command: docker-compose build buildkite_ci
+            - run:
+                name: docker run
+                command: docker-compose up -d buildkite_ci
 
 workflows:
   version: 2
