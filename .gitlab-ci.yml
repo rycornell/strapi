@@ -47,7 +47,7 @@ build:
 
     # MySQL
     - echo "*** STARTING MySQL Tests `date` ***"
-    - apt-get install -y mysql-client
+    - apt-get update && apt-get install -y mysql-client
     - yarn run -s test:generate-app -- '--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd'
     - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
     - yarn run -s test:e2e
