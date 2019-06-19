@@ -26,29 +26,16 @@ cache:
     - node_modules/
 
 build:
-  stage: build
   script:
     - echo "*** STARTING Build `date` ***"
     - yarn setup
     - echo "*** FINSHED Build `date` ***"
-  artifacts:
-    paths:
-      - /
-
-unit_test:
-  stage: unit_test
-  script:
     - echo "*** STARTING Lint and Unit Tests `date` ***"
     - yarn run -s lint
     - yarn run -s test:unit
     - yarn run -s test:front
     - echo "*** FINISHED Lint and Unit Tests `date` ***"
-  dependencies:
-    - build
 
-postgres_test:
-  stage: e2e_test
-  script:
     # Postgres
     - echo "*** STARTING Postgres Tests `date` ***"
     - apt-get update && apt-get install -y postgresql-client
@@ -57,12 +44,7 @@ postgres_test:
     - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
     - yarn run -s test:e2e      
     - echo "*** FINISHED Postgres Tests `date` ***"
-  dependencies:
-    - build
 
-mysql_test:
-  stage: e2e_test
-  script:
     # MySQL
     - echo "*** STARTING MySQL Tests `date` ***"
     - apt-get update && apt-get install -y mysql-client
@@ -70,34 +52,27 @@ mysql_test:
     - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
     - yarn run -s test:e2e
     - echo "*** FINISHED MySQL Tests `date` ***"
-  dependencies:
-    - build
-
-sqllite_test:
-  stage: e2e_test
-  script:
+      
     # SQL Lite
     - echo "*** STARTING SQLLite Tests `date` ***"
     - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
     - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
     - yarn run -s test:e2e
     - echo "*** FINISHED SQLLite Tests `date` ***"
-  dependencies:
-    - build
     
-mongo_test:
-  stage: e2e_test
-  script:
     # Mongo
     - echo "*** STARTING Mongo Tests `date` ***"
     - yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=mongo --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
     - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
     - yarn run -s test:e2e
     - echo "*** FINISHED Mongo Tests `date` ***"
-  dependencies:
-    - build
+    
+# test:
+#   script:
+#     - yarn run -s lint
+#     - yarn run -s test:unit
+#     - yarn run -s test:front
 
-stages:
-  - build
-  - unit_test
-  - e2e_test
+# e2e:
+#   script:
+#     - sudo apt-get install postgresql-client
