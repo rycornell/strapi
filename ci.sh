@@ -1,8 +1,5 @@
 #!/bin/sh
 
-echo "*** STARTING Build Tests `date` ***"
-yarn setup
-echo "*** FINSHED Build `date` ***"
 echo "*** STARTING Lint and Unit Tests `date` ***"
 yarn run -s lint
 yarn run -s test:unit

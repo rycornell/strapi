@@ -27,7 +27,7 @@ cache:
 
 build:
   script:
-    - echo "*** STARTING Build Tests `date` ***"
+    - echo "*** STARTING Build `date` ***"
     - yarn setup
     - echo "*** FINSHED Build `date` ***"
     - echo "*** STARTING Lint and Unit Tests `date` ***"
