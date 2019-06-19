@@ -6,11 +6,6 @@ image: node:10
 # Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
-services:
-  - name: mysql:latest
-    command: [--default-authentication-plugin=mysql_native_password]
-  - postgres:latest
-  - mongo:latest
 
 variables:
   # Configure mysql environment variables (https://hub.docker.com/_/mysql/)
@@ -47,6 +42,8 @@ unit_test:
     - build
 
 postgres_test:
+  services:
+    - mongo:latest
   stage: e2e_test
   script:
     # Postgres
@@ -61,6 +58,9 @@ postgres_test:
     - build
 
 mysql_test:
+  services:
+    - name: mysql:latest
+      command: [--default-authentication-plugin=mysql_native_password]
   stage: e2e_test
   script:
     # MySQL
@@ -86,6 +86,8 @@ sqllite_test:
     - build
     
 mongo_test:
+  services:
+    - mongo:latest
   stage: e2e_test
   script:
     # Mongo
