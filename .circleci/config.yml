@@ -22,7 +22,7 @@ jobs:
             - run:
                 name: docker run
                 command: |
-                    docker-compose up -d buildkite_ci /bin/sh -e -c 'echo "*** STARTING Lint and Unit Tests `date` ***"'
+                    docker-compose run --rm buildkite_ci /bin/sh -e -c 'echo "*** STARTING Lint and Unit Tests `date` ***"'
 
 workflows:
   version: 2
