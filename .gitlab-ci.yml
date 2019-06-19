@@ -32,7 +32,6 @@ build:
     - echo "*** FINSHED Build `date` ***"
     - echo "*** STARTING Lint and Unit Tests `date` ***"
     - yarn run -s lint
-    - yarn run -s lint
     - yarn run -s test:unit
     - yarn run -s test:front
     - echo "*** FINISHED Lint and Unit Tests `date` ***"
