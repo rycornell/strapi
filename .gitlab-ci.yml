@@ -43,7 +43,7 @@ unit_test:
 
 postgres_test:
   services:
-    - mongo:latest
+    - postgres:latest
   stage: e2e_test
   script:
     # Postgres
