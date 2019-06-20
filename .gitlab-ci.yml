@@ -28,7 +28,7 @@ build:
     - echo "*** FINSHED Build `date` ***"
   artifacts:
     paths:
-      - ~/
+      - ./
 
 unit_test:
   stage: unit_test
