@@ -1,5 +1,7 @@
 jobs:
     - job: job1
+      container:
+        image: node:10
       steps:
         - script: chmod +x ./run.sh
         - script: ./run.sh
