@@ -1,7 +1,5 @@
 jobs:
-    - job: job1
-      container:
-        image: node:10
+    - job: job1      
       steps:
-        - script: chmod +x ./run.sh
-        - script: ./run.sh
+        - script: docker-compose build buildkite_ci
+        - script: docker-compose run --rm buildkite_ci bash ci.sh
