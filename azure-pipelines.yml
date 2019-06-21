@@ -1,1 +1,2 @@
-- script: 'run.sh'
+steps:
+    - script: run.sh
