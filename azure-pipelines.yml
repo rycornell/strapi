@@ -1,5 +1,5 @@
 jobs:
     - job: job1
-        steps:
-            - script: chmod +x ./run.sh
-            - script: ./run.sh
+      steps:
+        - script: chmod +x ./run.sh
+        - script: ./run.sh
