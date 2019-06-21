@@ -2,4 +2,4 @@ jobs:
     - job: job1      
       steps:
         - script: docker-compose build buildkite_ci
-        - script: docker-compose run --rm buildkite_ci bash ci.sh
+        - script: docker-compose run --rm buildkite_ci bash run.sh
