@@ -9,4 +9,4 @@ jobs:
             - checkout
             - run:
                 name: docker build
-                command: docker-compose run --rm app bash yarn-ci.sh
+                command: docker-compose run app yarn setup
