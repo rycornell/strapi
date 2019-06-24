@@ -5,3 +5,4 @@ services:
     image: node:10
     volumes:
       - .:/app
+    working_dir: /app
