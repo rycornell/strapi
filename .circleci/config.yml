@@ -9,4 +9,4 @@ jobs:
             - checkout
             - run:
                 name: docker build
-                command: docker-compose run app cd app && yarn setup
+                command: docker-compose run app ls
