@@ -1,31 +1,12 @@
-version: 2.1    
-
-# end to end testing template
-e2e_tests: &e2e_tests
-    - run:
-        name: 'Run E2E Tests'
-        command: |
-            yarn run -s test:generate-app -- ${DB_STRING}
-            yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-            yarn run -s test:e2e
+version: 2.1
 
 # Define the jobs
 jobs:
     build:
-        working_directory: ~/app
-        machine: true
+        docker:
+            - image: circleci/node:10
         steps:
             - checkout
             - run:
-                name: docker build
-                command: docker-compose build buildkite_ci
-            - run:
-                name: docker run
-                command: |
-                    docker-compose run --rm buildkite_ci bash ci.sh
-
-workflows:
-  version: 2
-  build_and_test:
-    jobs:   
-        - build
+                name: yarn setup
+                command: yarn setup
