@@ -3,10 +3,9 @@ version: 2.1
 # Define the jobs
 jobs:
     build:
-        docker:
-            - image: circleci/node:10
+        machine: true
         steps:
             - checkout
             - run:
-                name: yarn setup
-                command: yarn setup
+                name: docker build
+                command: docker-compose run --rm app bash yarn-ci.sh
