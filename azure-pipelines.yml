@@ -9,3 +9,8 @@ jobs:
       container: node:10
       steps:
         - script: yarn setup        
+
+    - job: job2
+      container: mysql
+      steps:
+        - script: yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
