@@ -1,6 +1,5 @@
-image: node:10
-
 build:
   stage: build
   script:
-    - yarn setup
+    - docker-compose build buildkite_ci
+    - docker-compose run --rm buildkite_ci bash ci.sh
