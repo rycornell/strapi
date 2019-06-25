@@ -1,5 +1,11 @@
+# jobs:
+#     - job: job1      
+#       steps:
+#         - script: docker-compose build buildkite_ci
+#         - script: docker-compose run --rm buildkite_ci bash ci.sh
+
 jobs:
     - job: job1      
+      container: node:10
       steps:
-        - script: docker-compose build buildkite_ci
-        - script: docker-compose run --rm buildkite_ci bash ci.sh
+        - script: yarn setup        
