@@ -1,5 +1,8 @@
 image: docker
 
+serivces:
+  - docker:dind
+
 build:
   stage: build
   script:
