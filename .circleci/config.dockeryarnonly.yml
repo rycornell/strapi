@@ -1,0 +1,12 @@
+version: 2.1
+
+# Define the jobs
+jobs:
+    build:
+        working_directory: ~/app
+        machine: true
+        steps:
+            - checkout
+            - run:
+                name: docker build
+                command: docker-compose run app yarn setup
