@@ -27,6 +27,7 @@ RUN apk --no-cache --virtual build-dependencies add \
     python \
     make \
     g++ \
+    autoconf \
     && yarn setup \
     && yarn global add -g wait-on \
     && apk del build-dependencies
