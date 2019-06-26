@@ -67,7 +67,7 @@ build:
       - ./
 
 unit_test:
-  stage: unit_test
+  stage: e2e_test
   script:
     - echo "*** STARTING Lint and Unit Tests `date` ***"
     - yarn run -s lint
@@ -137,5 +137,5 @@ mongo_test:
 
 stages:
   - build
-  - unit_test
+  # - unit_test
   - e2e_test
