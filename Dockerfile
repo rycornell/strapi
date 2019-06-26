@@ -19,8 +19,21 @@ WORKDIR /app
 
 # Build the full app in the container
 COPY . ./
-RUN yarn setup
-RUN yarn global add -g wait-on
+
+
+# --no-cache: download package index on-the-fly, no need to cleanup afterwards
+# --virtual: bundle packages, remove whole bundle at once, when done
+RUN apk --no-cache --virtual build-dependencies add \
+    python \
+    make \
+    g++ \
+    && yarn setup \
+    && yarn global add -g wait-on \
+    && apk del build-dependencies
+
+
+# RUN yarn setup
+# RUN yarn global add -g wait-on
 
 # Clean up
 RUN apt-get clean \
