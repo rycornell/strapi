@@ -28,6 +28,7 @@ RUN apk --no-cache --virtual build-dependencies add \
     make \
     g++ \
     autoconf \
+    automake \
     && yarn setup \
     && yarn global add -g wait-on \
     && apk del build-dependencies
