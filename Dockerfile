@@ -8,6 +8,9 @@ FROM node:10-alpine
 #     && apt-get update \
 #     && apt-get install -y postgresql-client-10
 
+# Install curl (not on the node alpine image)
+RUN apk add --no-cache curl
+
 # Add the wait-for-it.sh script for waiting on dependent containers
 RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /usr/local/bin/wait-for-it.sh \
     && chmod +x /usr/local/bin/wait-for-it.sh
