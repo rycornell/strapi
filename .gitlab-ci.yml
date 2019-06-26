@@ -1,4 +1,4 @@
-image: tmaier/docker-compose:latest
+image: docker:latest
 
 variables:
    # When using dind service we need to instruct docker, to talk with the
@@ -14,7 +14,7 @@ variables:
    # DOCKER_HOST: tcp://localhost:2375/
    #
    # For non-Kubernetes executors, we use tcp://docker:2375/
-   DOCKER_HOST: 127.0.0.1:2375/
+   DOCKER_HOST: tcp://docker:2375/
    # When using dind, it's wise to use the overlayfs driver for
    # improved performance.
    DOCKER_DRIVER: overlay2
@@ -25,8 +25,8 @@ services:
 build:
   stage: build
   script:
-    # - apk add --no-cache python py2-pip
-    # - pip install --no-cache-dir docker-compose
-    # - docker-compose -v
+    - apk add --no-cache python py2-pip
+    - pip install --no-cache-dir docker-compose
+    - docker-compose -v
     - docker-compose build buildkite_ci
     - docker-compose run --rm buildkite_ci bash ci.sh
