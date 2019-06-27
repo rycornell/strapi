@@ -8,6 +8,12 @@ resources:
   containers:
   - container: mysql
     image: mysql:latest
+    options: '--default-authentication-plugin=mysql_native_password'
+    env:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: strapi_test
+      MYSQL_USER: ci
+      MYSQL_PASSWORD: passw0rd
 
 # jobs:
 #     - job: job1      
@@ -88,4 +94,7 @@ jobs:
       - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
         inputs:
           versionSpec: "1.10.1"          
-      - script: yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
+      - script: |
+          yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
+          yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+          yarn run -s test:e2e
