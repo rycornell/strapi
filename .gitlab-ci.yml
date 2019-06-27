@@ -52,10 +52,10 @@ variables:
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - node_modules/    
+# cache:
+#   key: ${CI_COMMIT_REF_SLUG}
+#   paths:
+#     - node_modules/    
 
 build:
   stage: build
@@ -63,12 +63,20 @@ build:
     - echo "*** STARTING Build `date` ***"
     - yarn setup
     - echo "*** FINSHED Build `date` ***"
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/  
   # artifacts:
   #   paths:
   #     - ./
 
 unit_test:
   stage: e2e_test
+  variables:
+    GIT_STRATEGY: none
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "*** STARTING Lint and Unit Tests `date` ***"
     - yarn run -s lint
@@ -82,6 +90,10 @@ postgres_test:
   services:
     - postgres:latest
   stage: e2e_test
+  variables:
+    GIT_STRATEGY: none
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
   script:
     # Postgres
     - echo "*** STARTING Postgres Tests `date` ***"
@@ -99,6 +111,8 @@ mysql_test:
     - name: mysql:latest
       command: [--default-authentication-plugin=mysql_native_password]
   stage: e2e_test
+  variables:
+    GIT_STRATEGY: none
   script:
     # MySQL
     - echo "*** STARTING MySQL Tests `date` ***"
@@ -112,6 +126,8 @@ mysql_test:
 
 sqllite_test:
   stage: e2e_test
+  variables:
+    GIT_STRATEGY: none
   script:
     # SQL Lite
     - echo "*** STARTING SQLLite Tests `date` ***"
@@ -126,6 +142,8 @@ mongo_test:
   services:
     - mongo:latest
   stage: e2e_test
+  variables:
+    GIT_STRATEGY: none
   script:
     # Mongo
     - echo "*** STARTING Mongo Tests `date` ***"
