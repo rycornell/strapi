@@ -52,9 +52,10 @@ variables:
 
 # This folder is cached between builds
 # http://docs.gitlab.com/ce/ci/yaml/README.html#cache
-# cache:
-#   paths:
-#     - node_modules/
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/    
 
 build:
   stage: build
@@ -62,9 +63,9 @@ build:
     - echo "*** STARTING Build `date` ***"
     - yarn setup
     - echo "*** FINSHED Build `date` ***"
-  artifacts:
-    paths:
-      - ./
+  # artifacts:
+  #   paths:
+  #     - ./
 
 unit_test:
   stage: e2e_test
