@@ -4,10 +4,10 @@
 #         - script: docker-compose build buildkite_ci
 #         - script: docker-compose run --rm buildkite_ci bash ci.sh
 
-# resources:
-#   containers:
-#   - container: mysql
-#     image: mysql:latest
+resources:
+  containers:
+  - container: mysql
+    image: mysql:latest
 
 # jobs:
 #     - job: job1      
@@ -69,3 +69,22 @@ jobs:
           yarn run -s test:unit
           yarn run -s test:front
         displayName: Lint and Unit Test
+
+  - job: MySql Test
+    services:
+      mysql: mysql
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "10.15.1"
+      - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+        inputs:
+          keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+          targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+          vstsFeed: '$(ArtifactFeed)'
+      - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
+        inputs:
+          versionSpec: "1.10.1"          
+      - script: yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
