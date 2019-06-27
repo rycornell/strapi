@@ -72,7 +72,7 @@ build:
       - .yml
       - .json
       - .js
-      - node_modules/
+      # - node_modules/
       - packages/
       - scripts/
       - test/
