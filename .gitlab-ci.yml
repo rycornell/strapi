@@ -81,8 +81,8 @@ unit_test:
   stage: e2e_test
   variables:
     GIT_STRATEGY: none
-  # cache:
-  #   key: ${CI_COMMIT_REF_SLUG}
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "*** STARTING Lint and Unit Tests `date` ***"
     - yarn run -s lint
@@ -98,8 +98,8 @@ postgres_test:
   stage: e2e_test
   variables:
     GIT_STRATEGY: none
-  # cache:
-  #   key: ${CI_COMMIT_REF_SLUG}
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
   script:
     # Postgres
     - echo "*** STARTING Postgres Tests `date` ***"
@@ -119,6 +119,8 @@ mysql_test:
   stage: e2e_test
   variables:
     GIT_STRATEGY: none
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
   script:
     # MySQL
     - echo "*** STARTING MySQL Tests `date` ***"
@@ -134,6 +136,8 @@ sqllite_test:
   stage: e2e_test
   variables:
     GIT_STRATEGY: none
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
   script:
     # SQL Lite
     - echo "*** STARTING SQLLite Tests `date` ***"
@@ -150,6 +154,8 @@ mongo_test:
   stage: e2e_test
   variables:
     GIT_STRATEGY: none
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
   script:
     # Mongo
     - echo "*** STARTING Mongo Tests `date` ***"
