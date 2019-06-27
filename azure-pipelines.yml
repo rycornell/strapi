@@ -55,6 +55,7 @@ jobs:
           versionSpec: "1.10.1"            
       - script: |
           yarn setup
+          yarn global add -g wait-on
         displayName: Yarn Setup
         condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
       - task: 1ESLighthouseEng.PipelineArtifactCaching.SaveCacheV1.SaveCache@1
@@ -63,3 +64,8 @@ jobs:
           targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
           vstsFeed: '$(ArtifactFeed)'
         condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
+      - script: |
+          yarn run -s lint
+          yarn run -s test:unit
+          yarn run -s test:front
+        displayName: Lint and Unit Test
