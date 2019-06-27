@@ -66,17 +66,18 @@ build:
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
-      - node_modules/  
-  # artifacts:
-  #   paths:
-  #     - ./
+      # - node_modules/  
+      - .cache/
+  artifacts:
+    paths:
+      - ./
 
 unit_test:
   stage: e2e_test
   variables:
     GIT_STRATEGY: none
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
+  # cache:
+  #   key: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "*** STARTING Lint and Unit Tests `date` ***"
     - yarn run -s lint
@@ -92,8 +93,8 @@ postgres_test:
   stage: e2e_test
   variables:
     GIT_STRATEGY: none
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
+  # cache:
+  #   key: ${CI_COMMIT_REF_SLUG}
   script:
     # Postgres
     - echo "*** STARTING Postgres Tests `date` ***"
