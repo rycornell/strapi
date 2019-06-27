@@ -70,7 +70,8 @@ jobs:
           yarn run -s test:front
         displayName: Lint and Unit Test
 
-  - job: MySql Test
+  - job: MySqlTest
+    displayName: MySql E2E Tests
     services:
       mysql: mysql
     pool:
