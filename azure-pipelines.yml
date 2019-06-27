@@ -26,6 +26,9 @@
 #           artifact: 'app'
 #         - script: yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
 
+variables:
+- group: strapi
+
 jobs:
   - job: Build
     pool:
