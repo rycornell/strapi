@@ -32,7 +32,7 @@ jobs:
       - task: NodeTool@0
         inputs:
           versionSpec: "10.15.1"
-      - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@2
+      - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
         inputs:
           versionSpec: "1.10.1"
       # - task: UsePythonVersion@0
