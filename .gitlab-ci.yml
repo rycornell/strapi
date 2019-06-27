@@ -63,14 +63,20 @@ build:
     - echo "*** STARTING Build `date` ***"
     - yarn setup
     - echo "*** FINSHED Build `date` ***"
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      # - node_modules/  
-      - .cache/
+  # cache:
+  #   key: ${CI_COMMIT_REF_SLUG}
+  #   paths:
+  #     # - node_modules/  
+  #     - .cache/
   artifacts:
     paths:
-      - ./
+      - .yml
+      - .json
+      - .js
+      - node_modules/
+      - packages/
+      - scripts/
+      - test/
 
 unit_test:
   stage: e2e_test
