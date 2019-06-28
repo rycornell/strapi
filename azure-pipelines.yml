@@ -132,7 +132,10 @@ jobs:
       #   inputs:
       #     versionSpec: "1.10.1"                
       - script: |          
-          apt-get update && apt-get install -y postgresql-client
+          apt-get update
+          apt-get -y install sudo
+          sudo mkdir -p /var/lib/apt/lists/partial
+          sudo apt-get install -y postgresql-client
           psql -c 'create database strapi_test;' -U postgres -h postgres
           # -p 5432
           # yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
