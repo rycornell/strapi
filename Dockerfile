@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:10
 
 # Postgressql client install not needed for buildkite:
 
@@ -8,13 +8,13 @@ FROM node:10-alpine
 #     && apt-get update \
 #     && apt-get install -y postgresql-client-10
 
-RUN apk --no-cache --virtual build-dependencies add \
-    curl \
-    python \
-    make \
-    g++ \
-    autoconf \
-    automake
+# RUN apk --no-cache --virtual build-dependencies add \
+#     curl \
+#     python \
+#     make \
+#     g++ \
+#     autoconf \
+#     automake
 
 WORKDIR /app
 
@@ -31,12 +31,12 @@ RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for
 RUN yarn setup
 RUN yarn global add -g wait-on
 
-RUN apk del build-dependencies
+# RUN apk del build-dependencies
 
 
 # RUN yarn setup
 # RUN yarn global add -g wait-on
 
 # Clean up
-# RUN apt-get clean \
-#     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /app/log/*
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /app/log/*
