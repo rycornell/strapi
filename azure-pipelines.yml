@@ -111,13 +111,13 @@ jobs:
 
   - job: PostgresTest
     displayName: Postgres E2E Tests
-    container: ubuntu:16.04
+    # container: ubuntu:16.04
     services:
       postgres:
         image: postgres:latest
     
-    # pool:
-    #   vmImage: 'ubuntu-16.04'
+    pool:
+      vmImage: 'ubuntu-16.04'
     steps:
       - task: NodeTool@0
         inputs:
@@ -130,11 +130,10 @@ jobs:
       - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
         inputs:
           versionSpec: "1.10.1"                
-      - script: |
-          apt-get update && apt-get install -y sudo && rm -rf /var/lib/apt/lists/*
-          sudo mkdir -p /var/lib/apt/lists/partial
-          apt-get install -y postgresql-client
-          psql -c 'create database strapi_test;' -U postgres -h postgres -p 5432
+      - script: |          
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          psql -c 'create database strapi_test;' -U postgres -h postgres
+          # -p 5432
           # yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
           # yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
           # yarn run -s test:e2e
