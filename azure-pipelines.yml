@@ -84,7 +84,9 @@ jobs:
     services:
       mysql:
         image: mysql
-        options: --default-authentication-plugin mysql_native_password
+        # options: --default-authentication-plugin mysql_native_password
+        ports:
+          - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: rootpw
           MYSQL_DATABASE: strapi_test
@@ -105,7 +107,7 @@ jobs:
         inputs:
           versionSpec: "1.10.1"          
       - script: |
-          yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
+          yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
           yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
           yarn run -s test:e2e
 
@@ -137,9 +139,7 @@ jobs:
       #     versionSpec: "1.10.1"                
       - script: |          
           sudo apt install -y postgresql-client
-          # sudo apt-get update && sudo apt-get install -y postgresql-client
           psql -c 'create database strapi_test;' -U postgres -h localhost
-          # -p 5432
-          # yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
-          # yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-          # yarn run -s test:e2e
+          yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+          yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+          yarn run -s test:e2e
