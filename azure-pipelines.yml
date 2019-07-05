@@ -36,8 +36,6 @@ stages:
               targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
               vstsFeed: '$(ArtifactFeed)'
             condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
-          - publish: $(System.DefaultWorkingDirectory)
-            artifact: app
 
   - stage: test
     jobs:
@@ -45,8 +43,6 @@ stages:
       displayName: Lint and Unit Test
       steps:
         - checkout: none
-        - download: current
-          artifact: app
         - task: NodeTool@0
           inputs:
             versionSpec: "10.15.1"
