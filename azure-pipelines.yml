@@ -36,11 +36,11 @@ stages:
               targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
               vstsFeed: '$(ArtifactFeed)'
             condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
-          - task: PublishPipelineArtifact@0
-            displayName: 'Publish pipeline artifact'
-            inputs:
-              artifactName: 'app'
-              targetPath: '$(System.DefaultWorkingDirectory)'
+          # - task: PublishPipelineArtifact@0
+          #   displayName: 'Publish pipeline artifact'
+          #   inputs:
+          #     artifactName: 'app'
+          #     targetPath: '$(System.DefaultWorkingDirectory)'
 
   - stage: test
     jobs:
@@ -48,11 +48,11 @@ stages:
       displayName: Lint and Unit Test
       steps:
         - checkout: none
-        - task: DownloadPipelineArtifact@0
-          displayName: 'Download pipeline artifact'
-          inputs:
-            artifactName: 'app'
-            targetPath: '$(System.DefaultWorkingDirectory)'
+        # - task: DownloadPipelineArtifact@0
+        #   displayName: 'Download pipeline artifact'
+        #   inputs:
+        #     artifactName: 'app'
+        #     targetPath: '$(System.DefaultWorkingDirectory)'
         - task: NodeTool@0
           inputs:
             versionSpec: "10.15.1"
@@ -66,103 +66,103 @@ stages:
             yarn run -s test:unit
             yarn run -s test:front
     
-    # - job: MySqlTest
-    #   displayName: MySql E2E Tests
-    #   services:
-    #     mysql:
-    #       image: mysql:5
-    #       ports:
-    #         - 33060:3306
-    #       env:
-    #         MYSQL_ROOT_PASSWORD: rootpw
-    #         MYSQL_DATABASE: strapi_test
-    #   pool:
-    #     vmImage: 'Ubuntu-16.04'
-    #   steps:
-    #     - task: NodeTool@0
-    #       inputs:
-    #         versionSpec: "10.15.1"
-    #     - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-    #       inputs:
-    #         keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-    #         targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
-    #         vstsFeed: '$(ArtifactFeed)'
-    #     - script: |
-    #         for i in `seq 1 30`; do
-    #           sleep 1
-    #           docker exec `docker container ls -n1 -q` mysql -uroot -prootpw -Dstrapi_test -e "SELECT 1"
-    #           if [ $? -ne 0 ]; then continue; fi
-    #           echo "MySQL is ready"
-    #           exit 0
-    #         done
-    #       displayName: 'Wait for MySQL'
-    #     - script: |
-    #         yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=root --dbpassword=rootpw"
-    #         yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-    #         yarn run -s test:e2e
+    - job: MySqlTest
+      displayName: MySql E2E Tests
+      services:
+        mysql:
+          image: mysql:5
+          ports:
+            - 33060:3306
+          env:
+            MYSQL_ROOT_PASSWORD: rootpw
+            MYSQL_DATABASE: strapi_test
+      pool:
+        vmImage: 'Ubuntu-16.04'
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "10.15.1"
+        - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+          inputs:
+            keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+            targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+            vstsFeed: '$(ArtifactFeed)'
+        - script: |
+            for i in `seq 1 30`; do
+              sleep 1
+              docker exec `docker container ls -n1 -q` mysql -uroot -prootpw -Dstrapi_test -e "SELECT 1"
+              if [ $? -ne 0 ]; then continue; fi
+              echo "MySQL is ready"
+              exit 0
+            done
+          displayName: 'Wait for MySQL'
+        - script: |
+            yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=root --dbpassword=rootpw"
+            yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+            yarn run -s test:e2e
 
-    # - job: PostgresTest
-    #   displayName: Postgres E2E Tests
-    #   services:
-    #     postgres:
-    #       image: postgres:9.6    
-    #       ports:
-    #         - 5432:5432
-    #   pool:
-    #     vmImage: 'ubuntu-16.04'
-    #   steps:
-    #     - task: NodeTool@0
-    #       inputs:
-    #         versionSpec: "10.15.1"
-    #     - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-    #       inputs:
-    #         keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-    #         targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
-    #         vstsFeed: '$(ArtifactFeed)'          
-    #     - script: |          
-    #         sudo apt install -y postgresql-client
-    #         psql -c 'create database strapi_test;' -U postgres -h localhost
-    #         yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
-    #         yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-    #         yarn run -s test:e2e
+    - job: PostgresTest
+      displayName: Postgres E2E Tests
+      services:
+        postgres:
+          image: postgres:9.6    
+          ports:
+            - 5432:5432
+      pool:
+        vmImage: 'ubuntu-16.04'
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "10.15.1"
+        - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+          inputs:
+            keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+            targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+            vstsFeed: '$(ArtifactFeed)'          
+        - script: |          
+            sudo apt install -y postgresql-client
+            psql -c 'create database strapi_test;' -U postgres -h localhost
+            yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+            yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+            yarn run -s test:e2e
 
-    # - job: SQLLite
-    #   displayName: SQLLite E2E Tests
-    #   pool:
-    #     vmImage: 'Ubuntu-16.04'
-    #   steps:
-    #     - task: NodeTool@0
-    #       inputs:
-    #         versionSpec: "10.15.1"
-    #     - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-    #       inputs:
-    #         keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-    #         targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
-    #         vstsFeed: '$(ArtifactFeed)'
-    #     - script: |
-    #         yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
-    #         yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-    #         yarn run -s test:e2e
+    - job: SQLLite
+      displayName: SQLLite E2E Tests
+      pool:
+        vmImage: 'Ubuntu-16.04'
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "10.15.1"
+        - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+          inputs:
+            keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+            targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+            vstsFeed: '$(ArtifactFeed)'
+        - script: |
+            yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
+            yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+            yarn run -s test:e2e
 
-    # - job: Mongo
-    #   displayName: Mongo E2E Tests
-    #   services:
-    #     mongo:
-    #       image: mongo:4
-    #       ports:
-    #         - 27017:27017
-    #   pool:
-    #     vmImage: 'Ubuntu-16.04'
-    #   steps:
-    #     - task: NodeTool@0
-    #       inputs:
-    #         versionSpec: "10.15.1"
-    #     - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-    #       inputs:
-    #         keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-    #         targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
-    #         vstsFeed: '$(ArtifactFeed)'
-    #     - script: |
-    #         yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
-    #         yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-    #         yarn run -s test:e2e            
+    - job: Mongo
+      displayName: Mongo E2E Tests
+      services:
+        mongo:
+          image: mongo:4
+          ports:
+            - 27017:27017
+      pool:
+        vmImage: 'Ubuntu-16.04'
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "10.15.1"
+        - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+          inputs:
+            keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+            targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+            vstsFeed: '$(ArtifactFeed)'
+        - script: |
+            yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
+            yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+            yarn run -s test:e2e            
