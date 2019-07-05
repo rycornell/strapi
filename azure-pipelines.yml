@@ -98,7 +98,7 @@ stages:
             # sudo apt install -y mysql-client
             # mysql -u root -p rootpw -e "create database strapi_test;"
             # mysql 
-            yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=root --dbpassword=passw0rd"
+            yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=root --dbpassword=rootpw"
             yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
             yarn run -s test:e2e
 
