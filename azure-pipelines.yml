@@ -67,7 +67,7 @@ stages:
           ports:
             - 33060:3306
           env:
-            # MYSQL_ROOT_PASSWORD: rootpw
+            MYSQL_ROOT_PASSWORD: rootpw
             MYSQL_DATABASE: strapi_test
             MYSQL_USER: ci
             MYSQL_PASSWORD: passw0rd
@@ -86,10 +86,19 @@ stages:
           inputs:
             versionSpec: "1.10.1"          
         - script: |
+            for i in `seq 1 30`; do
+              sleep 1
+              docker exec `docker container ls -n1 -q` mysql -uroot -prootpw -Dstrapi_test -e "SELECT 1"
+              if [ $? -ne 0 ]; then continue; fi
+              echo "MySQL is ready"
+              exit 0
+            done
+          displayName: 'Wait for MySQL'
+        - script: |
             # sudo apt install -y mysql-client
-            # mysql -uoot -prootpw -e "create database strapi_test;"
+            # mysql -u root -p rootpw -e "create database strapi_test;"
             # mysql 
-            yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
+            yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=root --dbpassword=passw0rd"
             yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
             yarn run -s test:e2e
 
