@@ -86,7 +86,7 @@ jobs:
         image: mysql
         # options: --default-authentication-plugin mysql_native_password
         ports:
-          - 3306:3306
+          - 33060:3306
         env:
           MYSQL_ROOT_PASSWORD: rootpw
           MYSQL_DATABASE: strapi_test
@@ -107,7 +107,7 @@ jobs:
         inputs:
           versionSpec: "1.10.1"          
       - script: |
-          yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
+          yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
           yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
           yarn run -s test:e2e
 
@@ -126,17 +126,17 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
     steps:
-      # - task: NodeTool@0
-      #   inputs:
-      #     versionSpec: "10.15.1"
-      # - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-      #   inputs:
-      #     keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-      #     targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
-      #     vstsFeed: '$(ArtifactFeed)'
-      # - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
-      #   inputs:
-      #     versionSpec: "1.10.1"                
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "10.15.1"
+      - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+        inputs:
+          keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+          targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+          vstsFeed: '$(ArtifactFeed)'
+      - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
+        inputs:
+          versionSpec: "1.10.1"                
       - script: |          
           sudo apt install -y postgresql-client
           psql -c 'create database strapi_test;' -U postgres -h localhost
