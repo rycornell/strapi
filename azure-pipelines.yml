@@ -150,6 +150,8 @@ stages:
       services:
         mongo:
           image: mongo:4
+          ports:
+            - 27017:27017
       pool:
         vmImage: 'Ubuntu-16.04'
       steps:
