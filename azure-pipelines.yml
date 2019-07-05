@@ -127,8 +127,29 @@ stages:
     #         yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
     #         yarn run -s test:e2e
 
-    - job: SQLLite
-      displayName: SQLLite E2E Tests
+    # - job: SQLLite
+    #   displayName: SQLLite E2E Tests
+    #   pool:
+    #     vmImage: 'Ubuntu-16.04'
+    #   steps:
+    #     - task: NodeTool@0
+    #       inputs:
+    #         versionSpec: "10.15.1"
+    #     - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+    #       inputs:
+    #         keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+    #         targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+    #         vstsFeed: '$(ArtifactFeed)'
+    #     - script: |
+    #         yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
+    #         yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+    #         yarn run -s test:e2e
+
+    - job: Mongo
+      displayName: Mongo E2E Tests
+      services:
+        mongo:
+          image: mongo:4
       pool:
         vmImage: 'Ubuntu-16.04'
       steps:
@@ -141,6 +162,6 @@ stages:
             targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
             vstsFeed: '$(ArtifactFeed)'
         - script: |
-            yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
+            yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
             yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-            yarn run -s test:e2e    
+            yarn run -s test:e2e            
