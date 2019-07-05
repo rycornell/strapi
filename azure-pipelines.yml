@@ -49,10 +49,10 @@ stages:
       steps:
         - checkout: none
         - task: DownloadPipelineArtifact@0
-            displayName: 'Download pipeline artifact'
-            inputs:
-              artifactName: 'app'
-              targetPath: '$(System.DefaultWorkingDirectory)'
+          displayName: 'Download pipeline artifact'
+          inputs:
+            artifactName: 'app'
+            targetPath: '$(System.DefaultWorkingDirectory)'
         - task: NodeTool@0
           inputs:
             versionSpec: "10.15.1"
