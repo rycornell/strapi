@@ -36,6 +36,11 @@ stages:
               targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
               vstsFeed: '$(ArtifactFeed)'
             condition: and(succeeded(), ne(variables['CacheRestored'], 'true'))
+          - task: PublishPipelineArtifact@0
+            displayName: 'Publish pipeline artifact'
+            inputs:
+              artifactName: 'app'
+              targetPath: '$(System.DefaultWorkingDirectory)'
 
   - stage: test
     jobs:
@@ -43,6 +48,11 @@ stages:
       displayName: Lint and Unit Test
       steps:
         - checkout: none
+        - task: DownloadPipelineArtifact@0
+            displayName: 'Download pipeline artifact'
+            inputs:
+              artifactName: 'app'
+              targetPath: '$(System.DefaultWorkingDirectory)'
         - task: NodeTool@0
           inputs:
             versionSpec: "10.15.1"
