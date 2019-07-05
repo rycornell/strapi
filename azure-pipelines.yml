@@ -4,40 +4,8 @@
 #         - script: docker-compose build buildkite_ci
 #         - script: docker-compose run --rm buildkite_ci bash ci.sh
 
-# resources:
-#   containers:
-#   - container: postgres
-#     image: postgres
-
-#   - container: mysql
-#     image: mysql
-#     options: --default-authentication-plugin mysql_native_password
-#     env:
-#       MYSQL_ROOT_PASSWORD: rootpw
-#       MYSQL_DATABASE: strapi_test
-#       MYSQL_USER: ci
-#       MYSQL_PASSWORD: passw0rd
-
-# jobs:
-#     - job: job1      
-#       container: node:10
-#       steps:
-#         - script: yarn setup 
-#         - publish: './'
-#           artifact: 'app'
-
-#     - job: job2
-#       container: node:10
-#       services:
-#         mysql: mysql
-#       steps:
-#         - download: 'current'
-#           artifact: 'app'
-#         - script: yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=mysql --dbport=3306 --dbname=strapi_test --dbusername=ci --dbpassword=passw0rd"
-
 variables:
 - group: strapi
-
 
 stages:
   - stage: build
@@ -71,24 +39,24 @@ stages:
 
   - stage: test
     jobs:
-    - job: UnitTest
-      displayName: Lint and Unit Test
-      steps:
-        - task: NodeTool@0
-          inputs:
-            versionSpec: "10.15.1"
-        - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-          inputs:
-            keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-            targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
-            vstsFeed: '$(ArtifactFeed)'
-        - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
-          inputs:
-            versionSpec: "1.10.1"          
-        - script: |
-            yarn run -s lint
-            yarn run -s test:unit
-            yarn run -s test:front
+    # - job: UnitTest
+    #   displayName: Lint and Unit Test
+    #   steps:
+    #     - task: NodeTool@0
+    #       inputs:
+    #         versionSpec: "10.15.1"
+    #     - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+    #       inputs:
+    #         keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+    #         targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+    #         vstsFeed: '$(ArtifactFeed)'
+    #     - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
+    #       inputs:
+    #         versionSpec: "1.10.1"          
+    #     - script: |
+    #         yarn run -s lint
+    #         yarn run -s test:unit
+    #         yarn run -s test:front
     
     - job: MySqlTest
       displayName: MySql E2E Tests
@@ -118,40 +86,36 @@ stages:
           inputs:
             versionSpec: "1.10.1"          
         - script: |
-            sudo apt install -y mysql-client
+            # sudo apt install -y mysql-client
+            mysql -uroot -prootpw -e "create database strapi_test;"
             yarn run -s test:generate-app -- "--dbclient=mysql --dbhost=localhost --dbport=33060 --dbname=strapi_test --dbusername=root --dbpassword=rootpw"
             yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
             yarn run -s test:e2e
 
-    - job: PostgresTest
-      displayName: Postgres E2E Tests
-      # container: ubuntu:16.04
-      # container: node:10
-      services:
-        postgres:
-          image: postgres:9.6    
-          ports:
-            - 5432:5432
-          # env:
-          #   PGHOST: postgres
-          #   PGUSER: postgres
-      pool:
-        vmImage: 'ubuntu-16.04'
-      steps:
-        - task: NodeTool@0
-          inputs:
-            versionSpec: "10.15.1"
-        - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
-          inputs:
-            keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-            targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
-            vstsFeed: '$(ArtifactFeed)'
-        - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
-          inputs:
-            versionSpec: "1.10.1"                
-        - script: |          
-            sudo apt install -y postgresql-client
-            psql -c 'create database strapi_test;' -U postgres -h localhost
-            yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
-            yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-            yarn run -s test:e2e
+    # - job: PostgresTest
+    #   displayName: Postgres E2E Tests
+    #   services:
+    #     postgres:
+    #       image: postgres:9.6    
+    #       ports:
+    #         - 5432:5432
+    #   pool:
+    #     vmImage: 'ubuntu-16.04'
+    #   steps:
+    #     - task: NodeTool@0
+    #       inputs:
+    #         versionSpec: "10.15.1"
+    #     - task: 1ESLighthouseEng.PipelineArtifactCaching.RestoreCacheV1.RestoreCache@1
+    #       inputs:
+    #         keyfile: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+    #         targetfolder: '**/node_modules, !**/node_modules/**/node_modules'
+    #         vstsFeed: '$(ArtifactFeed)'
+    #     - task: geeklearningio.gl-vsts-tasks-yarn.yarn-installer-task.YarnInstaller@3
+    #       inputs:
+    #         versionSpec: "1.10.1"                
+    #     - script: |          
+    #         sudo apt install -y postgresql-client
+    #         psql -c 'create database strapi_test;' -U postgres -h localhost
+    #         yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+    #         yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+    #         yarn run -s test:e2e
