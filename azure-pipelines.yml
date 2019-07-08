@@ -47,7 +47,7 @@ stages:
     - job: UnitTest
       displayName: Lint and Unit Test
       steps:
-        - checkout: none
+        # - checkout: none
         # - task: DownloadPipelineArtifact@0
         #   displayName: 'Download pipeline artifact'
         #   inputs:
