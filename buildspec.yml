@@ -32,7 +32,7 @@ phases:
       # - yarn run -s test:front      
       - docker rm --force postgres-service || true
       # - docker network create --driver bridge postgres-network
-      - docker run --rm -P -p 127.0.0.1:5432:5432 -e POSTGRES_PASSWORD="1234" --name postgres-service postgres -d
+      - docker run  -d --rm -P -p 127.0.0.1:5432:5432 -e POSTGRES_PASSWORD="1234" --name postgres-service postgres
       # - docker run --name postgres-service --network postgres-network -d postgres
       # - docker run --name postgres-service -d postgres --rm
       - apt-get update && apt install -y postgresql-client
