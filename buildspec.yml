@@ -25,16 +25,13 @@ phases:
       # - command
   build:
     commands:
-      # - yarn setup
-      # - yarn global add -g wait-on
-      # - yarn run -s lint
-      # - yarn run -s test:unit
-      # - yarn run -s test:front      
+      - yarn setup
+      - yarn global add -g wait-on
+      - yarn run -s lint
+      - yarn run -s test:unit
+      - yarn run -s test:front      
       - docker rm --force postgres-service || true
-      # - docker network create --driver bridge postgres-network
       - docker run  -d --rm -P -p 127.0.0.1:5432:5432 --name postgres-service postgres
-      # - docker run --name postgres-service --network postgres-network -d postgres
-      # - docker run --name postgres-service -d postgres --rm
       - apt-get update && apt install -y postgresql-client
       - psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
       - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
