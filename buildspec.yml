@@ -30,7 +30,7 @@ phases:
       # - yarn run -s lint
       # - yarn run -s test:unit
       # - yarn run -s test:front      
-      - docker rm --force postgres-service
+      - docker rm --force postgres-service || true
       - docker network create --driver bridge postgres-network
       - docker run --name postgres-service --network postgres-network -d postgres
       # - docker run --name postgres-service -d postgres --rm
