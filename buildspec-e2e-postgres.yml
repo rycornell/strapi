@@ -1,0 +1,45 @@
+version: 0.2
+
+#env:
+  #variables:
+     # key: "value"
+     # key: "value"
+  #parameter-store:
+     # key: "value"
+     # key: "value"
+  #git-credential-helper: yes
+
+phases:
+  install:
+    #If you use the Ubuntu standard image 2.0 or later, you must specify runtime-versions.
+    #If you specify runtime-versions and use an image other than Ubuntu standard image 2.0, the build fails.
+    runtime-versions:
+      nodejs: 10
+      docker: 18
+    #commands:
+      # - command
+      # - command
+  #pre_build:
+    #commands:
+      # - command
+      # - command
+  build:
+    commands:
+      - docker rm --force postgres-service || true
+      - docker run  -d --rm -P -p 127.0.0.1:5432:5432 --name postgres-service postgres
+      - apt-get update && apt install -y postgresql-client
+      - psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
+      - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+      - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+      - yarn run -s test:e2e
+  #post_build:
+    #commands:
+      # - command
+      # - command
+#artifacts:
+  #files:
+    # - location
+    # - location
+  #name: $(date +%Y-%m-%d)
+  #discard-paths: yes
+  #base-directory: location
