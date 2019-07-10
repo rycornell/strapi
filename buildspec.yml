@@ -54,6 +54,6 @@ phases:
   #base-directory: location
 cache:
   paths:
-    - 'node_modules/**/*'
+    # - 'node_modules/**/*'
     # - '~/.cache'
     # - './**/*'
