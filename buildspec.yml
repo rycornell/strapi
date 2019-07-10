@@ -29,6 +29,7 @@ phases:
       - yarn run -s lint
       - yarn run -s test:unit
       - yarn run -s test:front
+      - docker run --name postgres-service -d postgres
   #post_build:
     #commands:
       # - command
@@ -40,6 +41,8 @@ phases:
   #name: $(date +%Y-%m-%d)
   #discard-paths: yes
   #base-directory: location
-#cache:
-  #paths:
-    # - paths
+cache:
+  paths:
+    - '~/.npm'
+    - '~/.cache'
+    - '**/*'
