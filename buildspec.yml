@@ -30,7 +30,6 @@ phases:
       # - yarn run -s lint
       # - yarn run -s test:unit
       # - yarn run -s test:front
-      - docker rm --force postgres-service
       - docker run --name postgres-service -d --network=host postgres --rm
       - apt-get update && apt install -y postgresql-client
       - psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
