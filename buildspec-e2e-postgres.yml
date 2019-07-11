@@ -7,18 +7,18 @@ phases:
       docker: 18
   build:
     commands:
-      - pwd
-      - ls -a
-      - cd $CODEBUILD_SRC_DIR_BuildArtifact
-      - pwd
-      - ls -a
-      - cd /
-      - pwd
-      - ls -a
-      # - docker rm --force postgres-service || true
-      # - docker run  -d --rm -P -p 127.0.0.1:5432:5432 --name postgres-service postgres
-      # - apt-get update && apt install -y postgresql-client
-      # - psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
-      # - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
-      # - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-      # - yarn run -s test:e2e
+      # - pwd
+      # - ls -a
+      # - cd $CODEBUILD_SRC_DIR_BuildArtifact
+      # - pwd
+      # - ls -a
+      # - cd /
+      # - pwd
+      # - ls -a
+      - docker rm --force postgres-service || true
+      - docker run  -d --rm -P -p 127.0.0.1:5432:5432 --name postgres-service postgres
+      - apt-get update && apt install -y postgresql-client
+      - psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
+      - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+      - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+      - yarn run -s test:e2e

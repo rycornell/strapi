@@ -25,13 +25,13 @@ phases:
       # - command
   build:
     commands:
-      # - yarn setup
-      # - yarn global add -g wait-on
-      - pwd
-      - ls -a
-      - mkdir ./app
-      - touch test.txt
-      - ls -a
+      - yarn setup
+      - yarn global add -g wait-on
+      # - pwd
+      # - ls -a
+      # - mkdir ./app
+      # - touch test.txt
+      # - ls -a
 
   #post_build:
     #commands:
