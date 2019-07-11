@@ -23,7 +23,7 @@ phases:
       - ls -aL
       # node_modules symlinks are lost when storing artifacts
       # workaround to make sure all node_modules are stored as artifacts
-      - cp -a node_modules node_modules2
+      - cp -rL node_modules node_modules2
       - rm -rf node_modules
       - mv node_modules2 node_modules
   #post_build:
