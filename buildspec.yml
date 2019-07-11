@@ -27,6 +27,8 @@ phases:
     commands:
       - yarn setup
       - yarn global add -g wait-on
+      - cd node_modules
+      - ls -a
       # - pwd
       # - ls -a
       # - mkdir ./app
