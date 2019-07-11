@@ -33,8 +33,8 @@ phases:
 artifacts:
   files:
     - '**/*'
-# cache:
-#   paths:
-#     # - 'node_modules/**/*'
+cache:
+  paths:
+    - 'node_modules/**/*'
 #     # - '~/.cache'
 #     - '/.npm'
