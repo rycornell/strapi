@@ -7,6 +7,8 @@ phases:
       docker: 18
   build:
     commands:
+      - yarn setup
+      - yarn global add -g wait-on
       - docker rm --force postgres-service || true
       - docker run  -d --rm -P -p 127.0.0.1:5432:5432 --name postgres-service postgres
       - apt-get update && apt install -y postgresql-client

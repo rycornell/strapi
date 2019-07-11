@@ -1,14 +1,5 @@
 version: 0.2
 
-#env:
-  #variables:
-     # key: "value"
-     # key: "value"
-  #parameter-store:
-     # key: "value"
-     # key: "value"
-  #git-credential-helper: yes
-
 phases:
   install:
     #If you use the Ubuntu standard image 2.0 or later, you must specify runtime-versions.
@@ -25,16 +16,6 @@ phases:
       # - cp -rL node_modules node_modules2
       # - rm -rf node_modules
       # - mv node_modules2 node_modules
-  #post_build:
-    #commands:
-      # - command
-      # - command
-artifacts:
-  files:
-    - '**/*'
 cache:
   paths:
     - 'node_modules/**/*'
-    - 'yarn.lock'
-#     # - '~/.cache'
-#     - '/.npm'

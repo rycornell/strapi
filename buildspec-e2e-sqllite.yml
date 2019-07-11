@@ -7,6 +7,8 @@ phases:
       docker: 18
   build:
     commands:
+      - yarn setup
+      - yarn global add -g wait-on
       - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
       - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
       - yarn run -s test:e2e

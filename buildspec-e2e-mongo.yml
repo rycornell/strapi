@@ -7,6 +7,8 @@ phases:
       docker: 18
   build:
     commands:
+      - yarn setup
+      - yarn global add -g wait-on
       - docker rm --force mongo-service || true
       - docker run  -d --rm -P -p 127.0.0.1:27017:27017 --name mongo-service mongo:4
       - yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='

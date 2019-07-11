@@ -7,6 +7,8 @@ phases:
       docker: 18
   build:
     commands:
+      - yarn setup
+      - yarn global add -g wait-on
       - docker rm --force mysql-service || true
       - docker run  -d --rm -P -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=rootpw -e MYSQL_DATABASE=strapi_test --name mysql-service mysql --default-authentication-plugin=mysql_native_password      
       - yarn run -s test:generate-app -- '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=root --dbpassword=rootpw'
