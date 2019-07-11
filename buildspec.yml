@@ -25,18 +25,19 @@ phases:
       # - command
   build:
     commands:
-      - yarn setup
-      - yarn global add -g wait-on
+      - echo hello
+      # - yarn setup
+      # - yarn global add -g wait-on
 
   #post_build:
     #commands:
       # - command
       # - command
-artifacts:
-  files:
-    - '**/*'
-    - location
-  name: strapi-$(date +%Y-%m-%d)
+# artifacts:
+#   files:
+#     - '**/*'
+#     - location
+#   name: strapi-$(date +%Y-%m-%d)
   # discard-paths: no
   # base-directory: location
 cache:

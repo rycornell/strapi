@@ -7,8 +7,8 @@ phases:
       docker: 18
   build:
     commands:
-      - docker rm --force mysql-service || true
-      - docker run  -d --rm -P -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=rootpw -e MYSQL_DATABASE=strapi_test --name mysql-service mysql --default-authentication-plugin=mysql_native_password      
-      - yarn run -s test:generate-app -- '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=root --dbpassword=rootpw'
-      - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-      - yarn run -s test:e2e
+      # - docker rm --force mysql-service || true
+      # - docker run  -d --rm -P -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=rootpw -e MYSQL_DATABASE=strapi_test --name mysql-service mysql --default-authentication-plugin=mysql_native_password      
+      # - yarn run -s test:generate-app -- '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=root --dbpassword=rootpw'
+      # - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+      # - yarn run -s test:e2e
