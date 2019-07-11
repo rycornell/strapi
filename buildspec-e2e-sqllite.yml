@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 10
+      docker: 18
+  build:
+    commands:
+      - yarn run -s lint
+      - yarn run -s test:unit
+      - yarn run -s test:front      
