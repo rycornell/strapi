@@ -7,6 +7,7 @@ phases:
       docker: 18
   build:
     commands:
+      - yarn 
       - yarn run -s lint
       - yarn run -s test:unit
       - yarn run -s test:front
