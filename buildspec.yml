@@ -21,6 +21,9 @@ phases:
       - yarn setup
       - yarn global add -g wait-on
       - ls -aL
+      - cd node_modules/.bin
+      - ls -a      
+      - ls -aL
       # node_modules symlinks are lost when storing artifacts
       # workaround to make sure all node_modules are stored as artifacts
       - cp -rL node_modules node_modules2
