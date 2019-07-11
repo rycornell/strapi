@@ -33,11 +33,11 @@ phases:
     #commands:
       # - command
       # - command
-# artifacts:
-#   files:
-#     - '**/*'
+artifacts:
+  files:
+    - '**/*'
 #     - location
-#   name: strapi-$(date +%Y-%m-%d)
+  name: strapi-$(date +%Y-%m-%d)
   # discard-paths: no
   # base-directory: location
 cache:
