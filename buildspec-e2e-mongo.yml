@@ -9,6 +9,6 @@ phases:
     commands:
       - docker rm --force mongo-service || true
       - docker run  -d --rm -P -p 127.0.0.1:27017:27017 --name mongo-service mongo:4
-      - yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=mongo --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
+      - yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
       - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
       - yarn run -s test:e2e
