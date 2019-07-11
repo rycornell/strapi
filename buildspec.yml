@@ -32,13 +32,13 @@ phases:
     #commands:
       # - command
       # - command
-#artifacts:
-  #files:
-    # - location
-    # - location
-  #name: $(date +%Y-%m-%d)
-  #discard-paths: yes
-  #base-directory: location
+artifacts:
+  files:
+    - '**/*'
+    - location
+  name: strapi-$(date +%Y-%m-%d)
+  # discard-paths: no
+  # base-directory: location
 cache:
   paths:
     # - 'node_modules/**/*'
