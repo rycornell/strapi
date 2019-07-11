@@ -27,8 +27,11 @@ phases:
     commands:
       - yarn setup
       - yarn global add -g wait-on
-      - cd node_modules
-      - ls -a
+      # node_modules symlinks are lost when storing artifacts
+      # workaround to make sure all node_modules are stored as artifacts
+      - cp -rL node_modules node_modules2
+      - rm -rf node_modules
+      - mv node_modules2 node_modules
       # - pwd
       # - ls -a
       # - mkdir ./app
@@ -46,8 +49,8 @@ artifacts:
   # name: strapi-$(date +%Y-%m-%d)
   # discard-paths: no
   # base-directory: location
-cache:
-  paths:
-    # - 'node_modules/**/*'
-    # - '~/.cache'
-    - '/.npm'
+# cache:
+#   paths:
+#     # - 'node_modules/**/*'
+#     # - '~/.cache'
+#     - '/.npm'

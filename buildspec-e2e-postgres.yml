@@ -28,8 +28,8 @@ phases:
       - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
       - yarn run -s test:e2e
 
-cache:
-  paths:
-    # - 'node_modules/**/*'
-    # - '~/.cache'
-    - '/.npm'      
+# cache:
+#   paths:
+#     # - 'node_modules/**/*'
+#     # - '~/.cache'
+#     - '/.npm'      
