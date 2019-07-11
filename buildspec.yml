@@ -25,8 +25,8 @@ phases:
       # - command
   build:
     commands:
-      - yarn setup
-      - yarn global add -g wait-on
+      # - yarn setup
+      # - yarn global add -g wait-on
 
   #post_build:
     #commands:
