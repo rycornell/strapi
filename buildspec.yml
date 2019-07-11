@@ -30,6 +30,7 @@ phases:
       - pwd
       - ls -a
       - mkdir ./app
+      - touch test.txt
       - ls -a
 
   #post_build:
@@ -40,7 +41,7 @@ artifacts:
   files:
     - '**/*'
 #     - location
-  name: strapi-$(date +%Y-%m-%d)
+  # name: strapi-$(date +%Y-%m-%d)
   # discard-paths: no
   # base-directory: location
 cache:

@@ -12,6 +12,9 @@ phases:
       - cd $CODEBUILD_SRC_DIR_BuildArtifact
       - pwd
       - ls -a
+      - cd /
+      - pwd
+      - ls -a
       # - docker rm --force postgres-service || true
       # - docker run  -d --rm -P -p 127.0.0.1:5432:5432 --name postgres-service postgres
       # - apt-get update && apt install -y postgresql-client
