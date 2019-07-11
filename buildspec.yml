@@ -27,6 +27,7 @@ phases:
     commands:
       # - yarn setup
       # - yarn global add -g wait-on
+      - mkdir ./app
 
   #post_build:
     #commands:
