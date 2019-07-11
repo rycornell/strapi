@@ -16,13 +16,6 @@ phases:
     runtime-versions:
       nodejs: 10
       docker: 18
-    #commands:
-      # - command
-      # - command
-  #pre_build:
-    #commands:
-      # - command
-      # - command
   build:
     commands:
       - yarn setup
@@ -32,12 +25,6 @@ phases:
       - cp -rL node_modules node_modules2
       - rm -rf node_modules
       - mv node_modules2 node_modules
-      # - pwd
-      # - ls -a
-      # - mkdir ./app
-      # - touch test.txt
-      # - ls -a
-
   #post_build:
     #commands:
       # - command
@@ -45,10 +32,6 @@ phases:
 artifacts:
   files:
     - '**/*'
-#     - location
-  # name: strapi-$(date +%Y-%m-%d)
-  # discard-paths: no
-  # base-directory: location
 # cache:
 #   paths:
 #     # - 'node_modules/**/*'

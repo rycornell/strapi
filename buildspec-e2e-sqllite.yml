@@ -7,6 +7,6 @@ phases:
       docker: 18
   build:
     commands:
-      # - yarn run -s lint
-      # - yarn run -s test:unit
-      # - yarn run -s test:front      
+      - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
+      - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+      - yarn run -s test:e2e
