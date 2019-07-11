@@ -27,7 +27,10 @@ phases:
     commands:
       # - yarn setup
       # - yarn global add -g wait-on
+      - pwd
+      - ls -a
       - mkdir ./app
+      - ls -a
 
   #post_build:
     #commands:
