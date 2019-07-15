@@ -7,7 +7,6 @@ install:
 - yarn global add -g wait-on
 
 build_script:
-- mvn install
 - yarn run -s lint
 - yarn run -s test:unit
 - yarn run -s test:front
