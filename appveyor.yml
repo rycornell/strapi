@@ -1,6 +1,6 @@
-image: ubuntu
+image: Visual Studio 2017
 
-stack: node 10, mysql, docker
+# stack: node 10, mysql, docker
 
 install:
 - yarn setup
