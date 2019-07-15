@@ -6,7 +6,6 @@
 <h3 align="center">API creation made simple, secure and fast.</h3>
 <p align="center">The most advanced open-source Headless-CMS to build powerful APIs with no effort.</p>
 <br />
-[![Build status](https://ci.appveyor.com/api/projects/status/smal8j93otf637ta/branch/circleci?svg=true)](https://ci.appveyor.com/project/ryanmanns-ix/strapi/branch/circleci)
 <p align="center">
   <a href="https://www.npmjs.org/package/strapi">
     <img src="https://img.shields.io/npm/v/strapi/alpha.svg" alt="NPM Version" />
@@ -31,6 +30,8 @@
 </p>
 
 <br>
+
+[![Build status](https://ci.appveyor.com/api/projects/status/smal8j93otf637ta/branch/circleci?svg=true)](https://ci.appveyor.com/project/ryanmanns-ix/strapi/branch/circleci)
 
 Strapi is a free and open-source Headless CMS delivering your content anywhere you need.
 
