@@ -1,5 +1,8 @@
 image: Visual Studio 2017
 
+environment:
+  nodejs_version: "10"
+
 # stack: node 10, mysql, docker
 
 install:
