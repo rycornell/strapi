@@ -1,7 +1,7 @@
 image: ubuntu
 
 cache:
-  - /**/*
+  # - /**/*
   - /.npm
   - /.cache
 
