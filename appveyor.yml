@@ -4,5 +4,10 @@ stack: node 10, mysql, docker
 
 install:
 - yarn setup
+- yarn global add -g wait-on
 
-build: off
+build_script:
+- mvn install
+- yarn run -s lint
+- yarn run -s test:unit
+- yarn run -s test:front
