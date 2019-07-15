@@ -32,5 +32,7 @@ environment:
 install:
   # by default, all script lines are interpreted as batch
   - echo This is batch
+  - curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+  - sudo apt-get install -y nodejs
   # to run script as a PowerShell command prepend it with ps:
   - yarn setup
