@@ -22,8 +22,8 @@ test_script:
 # Postgres
 - echo "*** STARTING Postgres Tests `date` ***"
 #- sudo apt-get update && sudo apt-get install -y postgresql-client
-- psql -c 'create database strapi_test;' -U postgres -W Password12! -h localhost -p 5432
-- yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+- PGPASSWORD=Password12! psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
+- yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword=Password12!'
 - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
 - yarn run -s test:e2e      
 - echo "*** FINISHED Postgres Tests `date` ***"
