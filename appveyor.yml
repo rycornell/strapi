@@ -1,10 +1,12 @@
 # image: Visual Studio 2017
 image: ubuntu
 
-# environment:
-#   nodejs_version: "10"
+environment:
+  # nodejs_version: "10"
+  docker_image: node:10
 
-stack: node 10, mysql, postgresql, mongodb, docker
+
+# stack: node 10, mysql, postgresql, mongodb, docker
 
 install:
 - docker run -d --rm -P -p 127.0.0.1:27017:27017 --name mongo-service mongo:4
