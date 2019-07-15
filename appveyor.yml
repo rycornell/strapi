@@ -1,9 +1,8 @@
 image: ubuntu
 
-install:
-- npm install
+stack: node 10, mysql, docker
 
-test_script:
-- npm test
+install:
+- yarn setup
 
 build: off
