@@ -1,7 +1,7 @@
 image: ubuntu
 
 cache:
-  # - /**/*
+  - /home/appveyor/projects/strapi
   - /.npm
   - /.cache
 
