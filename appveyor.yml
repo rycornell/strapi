@@ -37,6 +37,7 @@ for:
     only:
       - job_name: Build
   install:
+  - ps: Install-Product node 10
   - yarn setup
   - yarn global add -g wait-on
 
