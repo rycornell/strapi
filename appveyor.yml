@@ -1,5 +1,7 @@
 image: ubuntu
 
+stack: docker
+
 build_script:
 - docker-compose build buildkite_ci
 - docker-compose run --rm buildkite_ci bash ci.sh
