@@ -31,14 +31,14 @@ environment:
 
 stack: node 10, mysql, postgresql, docker
 
-for:
--
-  matrix:
-    only:
-      - job_name: Build
-  build_script:
-  - yarn setup
-  - yarn global add -g wait-on
+# for:
+# -
+#   matrix:
+#     only:
+#       - job_name: Build
+#   build_script:
+#   - yarn setup
+#   - yarn global add -g wait-on
 
 -
   matrix:
@@ -63,11 +63,11 @@ for:
   - yarn run -s test:e2e      
   - echo "*** FINISHED Postgres Tests `date` ***"
 
-build: none
+install:
+- yarn setup
+- yarn global add -g wait-on
 
-# install:
-# - yarn setup
-# - yarn global add -g wait-on
+build: off
 
 # # build_script:
 # - echo "*** STARTING Lint and Unit Tests `date` ***"
