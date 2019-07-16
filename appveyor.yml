@@ -1,143 +1,106 @@
-image: Visual Studio 2017
+image: ubuntu
 
-cache:
-  - /home/appveyor/projects/strapi
-  - /.npm
-  - /.cache
+build_script:
+- docker-compose build buildkite_ci
+- docker-compose run --rm buildkite_ci bash ci.sh
 
-environment:
-  matrix:
-    - job_name: Build
+# cache:
+#   - /home/appveyor/projects/strapi
+#   - /.npm
+#   - /.cache
 
-    - job_name: Unit Tests
-      job_group: Tests
-      job_depends_on: Build
+# environment:
+#   matrix:
+#     - job_name: Build
 
-    - job_name: Postgres E2E Tests
-      job_group: Tests
-      job_depends_on: Build
+#     - job_name: Unit Tests
+#       job_group: Tests
+#       job_depends_on: Build
 
-    - job_name: MySQL Tests
-      job_group: Tests
-      job_depends_on: Build
+#     - job_name: Postgres E2E Tests
+#       job_group: Tests
+#       job_depends_on: Build
 
-    - job_name: SqlLite Tests
-      job_group: Tests
-      job_depends_on: Build
+#     - job_name: MySQL Tests
+#       job_group: Tests
+#       job_depends_on: Build
 
-    - job_name: Mongo Tests
-      job_group: Tests
-      job_depends_on: Build
+#     - job_name: SqlLite Tests
+#       job_group: Tests
+#       job_depends_on: Build
 
-stack: node 10, mysql, postgresql, docker
+#     - job_name: Mongo Tests
+#       job_group: Tests
+#       job_depends_on: Build
 
-for:
--
-  matrix:
-    only:
-      - job_name: Build
-  install:
-  - ps: Install-Product node 10
-  - yarn setup
-  - yarn global add -g wait-on
+# stack: node 10, mysql, postgresql, docker
 
--
-  matrix:
-    only:
-      - job_name: Unit Tests
-  test_script:
-  - echo "*** STARTING Lint and Unit Tests `date` ***"
-  - yarn run -s lint
-  - yarn run -s test:unit
-  - yarn run -s test:front
-  - echo "*** FINISHED Lint and Unit Tests `date` ***"
+# for:
+# -
+#   matrix:
+#     only:
+#       - job_name: Build
+#   install:
+#   - yarn setup
+#   - yarn global add -g wait-on
 
--
-  matrix:
-    only:
-      - job_name: Postgres E2E Tests
-  test_script:
-  - echo "*** STARTING Postgres Tests `date` ***"
-  - PGPASSWORD=Password12! psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
-  - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword=Password12!'
-  - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-  - yarn run -s test:e2e      
-  - echo "*** FINISHED Postgres Tests `date` ***"  
+# -
+#   matrix:
+#     only:
+#       - job_name: Unit Tests
+#   test_script:
+#   - echo "*** STARTING Lint and Unit Tests `date` ***"
+#   - yarn run -s lint
+#   - yarn run -s test:unit
+#   - yarn run -s test:front
+#   - echo "*** FINISHED Lint and Unit Tests `date` ***"
 
--
-  matrix:
-    only:
-      - job_name: MySQL Tests
-  test_script:
-  - echo "*** STARTING MySQL Tests `date` ***"
-  - MYSQL_PWD=Password12! mysql -e 'CREATE DATABASE strapi_test;' --user=root
-  - yarn run -s test:generate-app -- '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=root --dbpassword=Password12!'
-  - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-  - yarn run -s test:e2e
-  - echo "*** FINISHED MySQL Tests `date` ***"
+# -
+#   matrix:
+#     only:
+#       - job_name: Postgres E2E Tests
+#   test_script:
+#   - echo "*** STARTING Postgres Tests `date` ***"
+#   - PGPASSWORD=Password12! psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
+#   - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword=Password12!'
+#   - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+#   - yarn run -s test:e2e      
+#   - echo "*** FINISHED Postgres Tests `date` ***"  
 
--
-  matrix:
-    only:
-      - job_name: SqlLite Tests
-  test_script:
-  - echo "*** STARTING SQLLite Tests `date` ***"
-  - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
-  - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-  - yarn run -s test:e2e
-  - echo "*** FINISHED SQLLite Tests `date` ***"
+# -
+#   matrix:
+#     only:
+#       - job_name: MySQL Tests
+#   test_script:
+#   - echo "*** STARTING MySQL Tests `date` ***"
+#   - MYSQL_PWD=Password12! mysql -e 'CREATE DATABASE strapi_test;' --user=root
+#   - yarn run -s test:generate-app -- '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=root --dbpassword=Password12!'
+#   - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+#   - yarn run -s test:e2e
+#   - echo "*** FINISHED MySQL Tests `date` ***"
 
--
-  matrix:
-    only:
-      - job_name: Mongo Tests
-  test_script:
-  - echo "*** STARTING Mongo Tests `date` ***"
-  # install mongo v4
-  - docker run -d --rm -P -p 127.0.0.1:27017:27017 --name mongo-service mongo:4
-  - yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
-  - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-  - yarn run -s test:e2e
-  - echo "*** FINISHED Mongo Tests `date` ***"
+# -
+#   matrix:
+#     only:
+#       - job_name: SqlLite Tests
+#   test_script:
+#   - echo "*** STARTING SQLLite Tests `date` ***"
+#   - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
+#   - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+#   - yarn run -s test:e2e
+#   - echo "*** FINISHED SQLLite Tests `date` ***"
+
+# -
+#   matrix:
+#     only:
+#       - job_name: Mongo Tests
+#   test_script:
+#   - echo "*** STARTING Mongo Tests `date` ***"
+#   # install mongo v4
+#   - docker run -d --rm -P -p 127.0.0.1:27017:27017 --name mongo-service mongo:4
+#   - yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
+#   - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
+#   - yarn run -s test:e2e
+#   - echo "*** FINISHED Mongo Tests `date` ***"
 
 build: off
-
-# # build_script:
-# - echo "*** STARTING Lint and Unit Tests `date` ***"
-# - yarn run -s lint
-# - yarn run -s test:unit
-# - yarn run -s test:front
-# - echo "*** FINISHED Lint and Unit Tests `date` ***"
-
-# test_script:
-# Postgres
-# - echo "*** STARTING Postgres Tests `date` ***"
-# - PGPASSWORD=Password12! psql -c 'create database strapi_test;' -U postgres -h localhost -p 5432
-# - yarn run -s test:generate-app -- '--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword=Password12!'
-# - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-# - yarn run -s test:e2e      
-# - echo "*** FINISHED Postgres Tests `date` ***"
-
-# # MySQL
-# - echo "*** STARTING MySQL Tests `date` ***"
-# - MYSQL_PWD=Password12! mysql -e 'CREATE DATABASE strapi_test;' --user=root
-# - yarn run -s test:generate-app -- '--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=root --dbpassword=Password12!'
-# - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-# - yarn run -s test:e2e
-# - echo "*** FINISHED MySQL Tests `date` ***"
-      
-# # SQL Lite
-# - echo "*** STARTING SQLLite Tests `date` ***"
-# - yarn run -s test:generate-app -- '--dbclient=sqlite --dbfile=./tmp/data.db'
-# - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-# - yarn run -s test:e2e
-# - echo "*** FINISHED SQLLite Tests `date` ***"
-    
-# # Mongo
-# - echo "*** STARTING Mongo Tests `date` ***"
-# # install mongo v4
-# - docker run -d --rm -P -p 127.0.0.1:27017:27017 --name mongo-service mongo:4
-# - yarn run -s test:generate-app -- '--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
-# - yarn run -s test:start-app & ./node_modules/.bin/wait-on http://localhost:1337
-# - yarn run -s test:e2e
-# - echo "*** FINISHED Mongo Tests `date` ***"
