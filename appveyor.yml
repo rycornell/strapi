@@ -31,7 +31,7 @@ environment:
 
 stack: node 10, mysql, postgresql, docker
 
-# for:
+for:
 # -
 #   matrix:
 #     only:
