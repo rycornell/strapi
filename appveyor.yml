@@ -1,4 +1,4 @@
-image: ubuntu
+image: Visual Studio 2017
 
 cache:
   - /home/appveyor/projects/strapi
