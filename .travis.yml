@@ -37,10 +37,10 @@ install:
 
 jobs:
   include:
-    - stage: test
-      name: Snyk
-      script: yarn run -s test:snyk
-      if: fork = false
+    # - stage: test
+    #   name: Snyk
+    #   script: yarn run -s test:snyk
+    #   if: fork = false
 
     - stage: test
       name: 'Lint / Unit Tests '
