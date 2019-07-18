@@ -1,86 +1,93 @@
 services:
-  - postgresql
-  - mysql
+  - docker
 
-sudo: required
-dist: trusty
+script: 
+  - docker-compose build buildkite_ci
+  - docker-compose run --rm buildkite_ci bash ci.sh
 
-language: node_js
+# services:
+#   - postgresql
+#   - mysql
 
-node_js:
-  - '10'
+# sudo: required
+# dist: trusty
 
-cache:
-  yarn: true
-  directories:
-    - node_modules
+# language: node_js
 
-# end to end testing template
-e2e_tests: &e2e_tests
-  stage: 'End to End tests'
-  script:
-    - yarn run -s test:generate-app -- $DB_STRING
-    - yarn run -s test:start-app & wait-on http://localhost:1337
-    - yarn run -s test:e2e
+# node_js:
+#   - '10'
 
-install_mongo: &install_mongo
-  before_install:
-    - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.6.tgz
-    - tar -zxvf mongodb-linux-x86_64-3.6.6.tgz
-    - mkdir -p ./data/db/27017
-    - mkdir -p ./data/db/27000
-    - ./mongodb-linux-x86_64-3.6.6/bin/mongod --fork --dbpath ./data/db/27017 --syslog --port 27017
+# cache:
+#   yarn: true
+#   directories:
+#     - node_modules
 
-install:
-  - yarn setup
-  - yarn global add -g wait-on
+# # end to end testing template
+# e2e_tests: &e2e_tests
+#   stage: 'End to End tests'
+#   script:
+#     - yarn run -s test:generate-app -- $DB_STRING
+#     - yarn run -s test:start-app & wait-on http://localhost:1337
+#     - yarn run -s test:e2e
 
-jobs:
-  include:
-    # - stage: test
-    #   name: Snyk
-    #   script: yarn run -s test:snyk
-    #   if: fork = false
+# install_mongo: &install_mongo
+#   before_install:
+#     - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.6.6.tgz
+#     - tar -zxvf mongodb-linux-x86_64-3.6.6.tgz
+#     - mkdir -p ./data/db/27017
+#     - mkdir -p ./data/db/27000
+#     - ./mongodb-linux-x86_64-3.6.6/bin/mongod --fork --dbpath ./data/db/27017 --syslog --port 27017
 
-    - stage: test
-      name: 'Lint / Unit Tests '
-      script:
-        - yarn run -s lint
-        - yarn run -s test:unit
-        - yarn run -s test:front
+# install:
+#   - yarn setup
+#   - yarn global add -g wait-on
 
-    - <<: *e2e_tests
-      name: 'E2E Postgresql'
-      before_install:
-        - psql -c 'create database strapi_test;' -U postgres
-      env:
-        - DB_STRING='--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
+# jobs:
+#   include:
+#     # - stage: test
+#     #   name: Snyk
+#     #   script: yarn run -s test:snyk
+#     #   if: fork = false
 
-    - <<: *e2e_tests
-      name: 'E2E Mysql'
-      before_install:
-        - mysql -e 'CREATE DATABASE strapi_test;'
-      env:
-        - DB_STRING='--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=travis --dbpassword='
+#     - stage: test
+#       name: 'Lint / Unit Tests '
+#       script:
+#         - yarn run -s lint
+#         - yarn run -s test:unit
+#         - yarn run -s test:front
 
-    - <<: *e2e_tests
-      name: 'E2E Sqlite'
-      env:
-        - DB_STRING='--dbclient=sqlite --dbfile=./tmp/data.db'
+#     - <<: *e2e_tests
+#       name: 'E2E Postgresql'
+#       before_install:
+#         - psql -c 'create database strapi_test;' -U postgres
+#       env:
+#         - DB_STRING='--dbclient=postgres --dbhost=localhost --dbport=5432 --dbname=strapi_test --dbusername=postgres --dbpassword='
 
-    - <<: *e2e_tests
-      name: 'E2E MongoDB'
-      <<: *install_mongo
-      env:
-        - DB_STRING='--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
+#     - <<: *e2e_tests
+#       name: 'E2E Mysql'
+#       before_install:
+#         - mysql -e 'CREATE DATABASE strapi_test;'
+#       env:
+#         - DB_STRING='--dbclient=mysql --dbhost=localhost --dbport=3306 --dbname=strapi_test --dbusername=travis --dbpassword='
 
-    # - name: 'Cypress tests'
-    #   <<: *install_mongo
-    #   install:
-    #     - yarn run -s bootstrap
-    #     - yarn global add -g wait-on
-    #     - cypress install
-    #   script:
-    #     - yarn run -s test:generate-app -- --dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword=
-    #     - yarn run -s test:start-app & wait-on http://localhost:1337
-    #     - node test/cypress.js
+#     - <<: *e2e_tests
+#       name: 'E2E Sqlite'
+#       env:
+#         - DB_STRING='--dbclient=sqlite --dbfile=./tmp/data.db'
+
+#     - <<: *e2e_tests
+#       name: 'E2E MongoDB'
+#       <<: *install_mongo
+#       env:
+#         - DB_STRING='--dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword='
+
+#     # - name: 'Cypress tests'
+#     #   <<: *install_mongo
+#     #   install:
+#     #     - yarn run -s bootstrap
+#     #     - yarn global add -g wait-on
+#     #     - cypress install
+#     #   script:
+#     #     - yarn run -s test:generate-app -- --dbclient=mongo --dbhost=localhost --dbport=27017 --dbname=strapi_test --dbusername= --dbpassword=
+#     #     - yarn run -s test:start-app & wait-on http://localhost:1337
+#     #     - node test/cypress.js
